@@ -25,8 +25,11 @@ ORDER BY due_date::DATE ASC;`
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         return diffDays;
     };
-  var message = "Hello. These are the upcoming homework that are due soon. You may add to the homework list @ https://hw.techtime.coffee/ (It does not work on school wifi, pls use hotspot): "
-  for (let i = 0; i < insertResult.rows.length; i++) {
+  var message = "Hello. These are the upcoming homework that are due soon. You may add to the homework list @ https://class-homework.vercel.app/ : "
+  if (insertResult.rows.length === 0) {
+      message+=`\nNo homework has been added! `
+  }else {
+      for (let i = 0; i < insertResult.rows.length; i++) {
 
     const row = insertResult.rows[i];
         const daysUntilDue = getDaysUntilDue(row.due_date);
@@ -40,6 +43,7 @@ ORDER BY due_date::DATE ASC;`
                                                             : `${daysUntilDue} days left`
                                                         } (By: ${row.name})`;
 
+  }
   }
 
   return new Response(JSON.stringify(message), {
