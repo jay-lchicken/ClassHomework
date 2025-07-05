@@ -41,7 +41,7 @@ ORDER BY due_date::DATE ASC;`
                                                             : daysUntilDue === 1
                                                             ? "Tomorrow"
                                                             : `${daysUntilDue} days left`
-                                                        } (By: ${row.name})`;
+                                                        } (By: ${row.name.slice(0,4)}.)`;
 
   }
   }
