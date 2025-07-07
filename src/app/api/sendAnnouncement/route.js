@@ -19,12 +19,14 @@ ORDER BY due_date::DATE ASC;`
     };
 
     const getDaysUntilDue = (dueDate) => {
-        const today = new Date();
-        const due = new Date(dueDate);
-        const diffTime = due - today;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        return diffDays;
-    };
+    const today = new Date();
+    const due = new Date(dueDate);
+    today.setHours(0, 0, 0, 0);
+    due.setHours(0, 0, 0, 0);
+    const diffTime = due - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+};
   var message = "Hello. These are the upcoming homework that are due soon. You may add to the homework list @ https://class-homework.vercel.app/ : "
   if (insertResult.rows.length === 0) {
       message+=`\nNo homework has been added! `
@@ -41,6 +43,7 @@ ORDER BY due_date::DATE ASC;`
                                                             : daysUntilDue === 1
                                                             ? "Tomorrow"
                                                             : `${daysUntilDue} days left`
+                         
                                                         } (By: ${row.name.slice(0,4)}.)`;
 
   }
