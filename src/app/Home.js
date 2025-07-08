@@ -3,6 +3,7 @@ import Image from "next/image";
 import {useState, useEffect} from "react";
 import {Calendar, BookOpen, Plus, Trash2, Clock} from 'lucide-react';
 import {useUser} from "@clerk/nextjs";
+import {DateTime} from "luxon";
 export default function Add({homeworkList}) {
     const [homework, setHomework] = useState("");
     const [dueDate, setDueDate] = useState("");
@@ -61,13 +62,10 @@ export default function Add({homeworkList}) {
         });
     };
 
-    const getDaysUntilDue = (dueDate) => {
-    const today = new Date();
-    const due = new Date(dueDate);
-    today.setHours(0, 0, 0, 0);
-    due.setHours(0, 0, 0, 0);
-    const diffTime = due - today;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const getDaysUntilDue = (dueDateStr) => {
+    const todaySGT = DateTime.now().setZone("Asia/Singapore").startOf("day");
+    const dueSGT = DateTime.fromISO(dueDateStr, { zone: "Asia/Singapore" }).startOf("day");
+    const diffDays = Math.ceil(dueSGT.diff(todaySGT, "days").days);
     return diffDays;
 };
 

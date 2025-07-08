@@ -1,6 +1,7 @@
 import { getAuth } from "@clerk/nextjs/server";
 import pool from "@/lib/db";
 import { NextResponse } from "next/server";
+import {DateTime} from "luxon";
 
 export async function GET(req) {
 
@@ -17,21 +18,17 @@ ORDER BY due_date::DATE ASC;`
             day: 'numeric'
         });
     };
-
-    const getDaysUntilDue = (dueDate) => {
-    const today = new Date();
-    const due = new Date(dueDate);
-    today.setHours(0, 0, 0, 0);
-    due.setHours(0, 0, 0, 0);
-    const diffTime = due - today;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+const getDaysUntilDue = (dueDateStr) => {
+    const todaySGT = DateTime.now().setZone("Asia/Singapore").startOf("day");
+    const dueSGT = DateTime.fromISO(dueDateStr, { zone: "Asia/Singapore" }).startOf("day");
+    const diffDays = Math.ceil(dueSGT.diff(todaySGT, "days").days);
     return diffDays;
 };
   var message = "Hello. These are the upcoming homework that are due soon. You may add to the homework list @ https://class-homework.vercel.app/ : "
   if (insertResult.rows.length === 0) {
       message+=`\nNo homework has been added! `
   }else {
-      for (let i = 0; i < insertResult.rows.length; i++) {
+      for (let i = 0;    i < insertResult.rows.length; i++) {
 
     const row = insertResult.rows[i];
         const daysUntilDue = getDaysUntilDue(row.due_date);
