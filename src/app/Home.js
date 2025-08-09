@@ -2,14 +2,17 @@
 import Image from "next/image";
 import {useState, useEffect} from "react";
 import {Calendar, BookOpen, Plus, Trash2, Clock} from 'lucide-react';
-import {useUser} from "@clerk/nextjs";
+import {SignedIn, SignedOut, SignInButton, SignUpButton, useUser} from '@clerk/nextjs';
 import {DateTime} from "luxon";
 export default function Add({homeworkList}) {
+
     const [homework, setHomework] = useState("");
     const [dueDate, setDueDate] = useState("");
     const [isAdding, setIsAdding] = useState(false);
     const [homeworkListState, setHomeworkListState] = useState(homeworkList || []);
-    const user = useUser()
+    const {user} = useUser();
+    const [showAddNewHomework, setShowAddNewHomework] = useState(true);
+
 
 
 
@@ -78,72 +81,35 @@ export default function Add({homeworkList}) {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 p-4">
-            <div className="max-w-6xl mx-auto">
-                <div className="flex items-center justify-center mb-8">
-                    <div className="w-full max-w-md">
-                        <div className="text-center mb-8">
-                            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full mb-4 shadow-lg">
-                                <BookOpen className="w-8 h-8 text-white"/>
-                            </div>
-                            <h1 className="text-3xl font-bold text-gray-800 mb-2">Add Homework</h1>
-                        </div>
-
-                        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
-                            <div className="space-y-6">
-                                <div className="space-y-2">
-                                    <label htmlFor="homework" className="block text-sm font-semibold text-gray-700">
-                                        Assignment
-                                    </label>
+        <div className=" items-center justify-center flex flex-col min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 p-4">
+            <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-8 shadow-2xl mb-8 max-w-6xl mx-auto w-[70%]">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                <div className="flex items-center gap-4">
                                     <div className="relative">
-                                        <input
-                                            id="homework"
-                                            type="text"
-                                            placeholder="Enter your homework assignment..."
-                                            value={homework}
-                                            onChange={(e) => setHomework(e.target.value)}
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 text-black"
-                                            required
+                                        <img
+                                            src={user?.imageUrl}
+                                            alt={user?.fullName}
+                                            className="w-16 h-16 rounded-full border-2 border-blue-500/30 shadow-lg"
                                         />
+                                        <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-slate-800"></div>
+                                    </div>
+                                    <div>
+                                        <h1 className="text-3xl font-bold text-white mb-1">
+                                            Welcome back, {user?.fullName || 'Unknown'} 👋
+                                        </h1>
+                                        <p className="text-white">Project S208</p>
                                     </div>
                                 </div>
 
-                                <div className="space-y-2">
-                                    <label htmlFor="dueDate" className="block text-sm font-semibold text-gray-700">
-                                        Due Date
-                                    </label>
-                                    <div className="relative">
-                                        <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"/>
-                                        <input
-                                            id="dueDate"
-                                            type="date"
-                                            value={dueDate}
-                                            onChange={(e) => setDueDate(e.target.value)}
-                                            className="text-black w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
-                                            required
-                                        />
-                                    </div>
+                                <div className="flex items-center gap-2 text-sm text-white">
+                                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                    <span>Online</span>
                                 </div>
-
-                                <button
-                                    type="submit"
-                                    onClick={() => {
-                                        if (!homework || !dueDate) {
-                                            alert("Please fill in all fields.");
-                                            return;
-                                        }
-                                        addHomework();
-                                    }}
-                                    disabled={isAdding}
-                                    className="disabled:opacity-50 w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
-                                >
-                                    <Plus className="w-5 h-5"/>
-                                    {isAdding ? "Adding..." : "Add Homework"}
-                                </button>
                             </div>
                         </div>
-                    </div>
-                </div>
+            <div className="max-w-6xl mx-auto w-[70%]">
+
+
 
                 {homeworkListState.length > 0 && (
                     <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
@@ -216,6 +182,15 @@ export default function Add({homeworkList}) {
                         </div>
                     </div>
                 )}
+                <div className={"fixed bottom-4 right-4 z-50"}>
+                    <button
+                        onClick={() => setShowAddNewHomework(true)}
+                        className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-full shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
+                    >
+                        <Plus className="w-5 h-5"/>
+                        Add Homework
+                    </button>
+                </div>
 
                 {homeworkListState.length === 0 && (
                     <div className="text-center py-12">
@@ -224,6 +199,75 @@ export default function Add({homeworkList}) {
                         <p className="text-gray-500">Add the first homework using the form above.</p>
                     </div>
                 )}
+
+                {showAddNewHomework && (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-gray-100 p-8 relative">
+            <button
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold"
+                onClick={() => setShowAddNewHomework(false)}
+                aria-label="Close"
+            >
+                &times;
+            </button>
+            <div className="text-center mb-8">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full mb-4 shadow-lg">
+                    <BookOpen className="w-8 h-8 text-white"/>
+                </div>
+                <h1 className="text-3xl font-bold text-gray-800 mb-2">Add Homework</h1>
+            </div>
+            <div className="space-y-6">
+                <div className="space-y-2">
+                    <label htmlFor="homework" className="block text-sm font-semibold text-gray-700">
+                        Assignment
+                    </label>
+                    <div className="relative">
+                        <input
+                            id="homework"
+                            type="text"
+                            placeholder="Enter your homework assignment..."
+                            value={homework}
+                            onChange={(e) => setHomework(e.target.value)}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 text-black"
+                            required
+                        />
+                    </div>
+                </div>
+                <div className="space-y-2">
+                    <label htmlFor="dueDate" className="block text-sm font-semibold text-gray-700">
+                        Due Date
+                    </label>
+                    <div className="relative">
+                        <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"/>
+                        <input
+                            id="dueDate"
+                            type="date"
+                            value={dueDate}
+                            onChange={(e) => setDueDate(e.target.value)}
+                            className="text-black w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                            required
+                        />
+                    </div>
+                </div>
+                <button
+                    type="submit"
+                    onClick={() => {
+                        if (!homework || !dueDate) {
+                            alert("Please fill in all fields.");
+                            return;
+                        }
+                        addHomework();
+                    }}
+                    disabled={isAdding}
+                    className="disabled:opacity-50 w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                >
+                    <Plus className="w-5 h-5"/>
+                    {isAdding ? "Adding..." : "Add Homework"}
+                </button>
+            </div>
+        </div>
+    </div>
+)}
             </div>
         </div>
     );
