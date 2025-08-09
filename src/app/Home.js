@@ -11,7 +11,7 @@ export default function Add({homeworkList}) {
     const [isAdding, setIsAdding] = useState(false);
     const [homeworkListState, setHomeworkListState] = useState(homeworkList || []);
     const {user} = useUser();
-    const [showAddNewHomework, setShowAddNewHomework] = useState(true);
+    const [showAddNewHomework, setShowAddNewHomework] = useState(false);
 
 
 
