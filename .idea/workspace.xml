@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5f98af34-a344-488a-bedc-3ec50ff87246" name="Changes" comment="refactor date handling in homework API to use Luxon for accurate due date calculations">
+    <list default="true" id="5f98af34-a344-488a-bedc-3ec50ff87246" name="Changes" comment="update homework UI to hide 'Add New Homework' button and adjust workspace configuration">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/Home.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/Home.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -110,7 +109,8 @@
       <workItem from="1751929932171" duration="1421000" />
       <workItem from="1752016548832" duration="1052000" />
       <workItem from="1752382940629" duration="22000" />
-      <workItem from="1754708961146" duration="1032000" />
+      <workItem from="1754708961146" duration="1328000" />
+      <workItem from="1754710527630" duration="316000" />
     </task>
     <task id="LOCAL-00001" summary="initialize project with Next.js, PostgreSQL, and Tailwind CSS setup">
       <option name="closed" value="true" />
@@ -168,7 +168,23 @@
       <option name="project" value="LOCAL" />
       <updated>1752016955439</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="enhance homework UI with user greeting and add homework button. UI Improvement">
+      <option name="closed" value="true" />
+      <created>1754710283407</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1754710283407</updated>
+    </task>
+    <task id="LOCAL-00009" summary="update homework UI to hide 'Add New Homework' button and adjust workspace configuration">
+      <option name="closed" value="true" />
+      <created>1754710576336</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1754710576336</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -193,6 +209,8 @@
     <MESSAGE value="shorten name display in homework API response and update workspace configuration" />
     <MESSAGE value="refactor date calculations in homework API to ensure accurate day difference" />
     <MESSAGE value="refactor date handling in homework API to use Luxon for accurate due date calculations" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor date handling in homework API to use Luxon for accurate due date calculations" />
+    <MESSAGE value="enhance homework UI with user greeting and add homework button. UI Improvement" />
+    <MESSAGE value="update homework UI to hide 'Add New Homework' button and adjust workspace configuration" />
+    <option name="LAST_COMMIT_MESSAGE" value="update homework UI to hide 'Add New Homework' button and adjust workspace configuration" />
   </component>
 </project>
