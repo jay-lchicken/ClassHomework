@@ -1,9 +1,9 @@
-import { getSession } from "@auth0/nextjs-auth0";
+import { auth0 } from "@/lib/auth0";
 import pool from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
-  const session = await getSession();
+  const session = await auth0.getSession();
   const body = await req.json();
 
   const { homework, due_date } = body;

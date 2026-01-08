@@ -1,9 +1,9 @@
-import { getSession } from "@auth0/nextjs-auth0";
+import { auth0 } from "@/lib/auth0";
 import pool from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
-  const session = await getSession();
+  const session = await auth0.getSession();
 
   if (!session || !session.user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
