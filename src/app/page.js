@@ -1,5 +1,3 @@
-import { getSession } from "@auth0/nextjs-auth0";
-import { redirect } from "next/navigation";
 import HomePage from "@/app/Home";
 import { Suspense } from "react";
 import Add from "@/app/Home";
