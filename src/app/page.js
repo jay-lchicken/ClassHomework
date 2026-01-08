@@ -1,5 +1,3 @@
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 import HomePage from "@/app/Home";
 import { Suspense } from "react";
 import Add from "@/app/Home";
