@@ -2,7 +2,7 @@
 import Image from "next/image";
 import {useState, useEffect} from "react";
 import {Calendar, BookOpen, Plus, Trash2, Clock} from 'lucide-react';
-import {SignedIn, SignedOut, SignInButton, SignUpButton, useUser} from '@clerk/nextjs';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import {DateTime} from "luxon";
 export default function Add({homeworkList}) {
 
@@ -10,8 +10,29 @@ export default function Add({homeworkList}) {
     const [dueDate, setDueDate] = useState("");
     const [isAdding, setIsAdding] = useState(false);
     const [homeworkListState, setHomeworkListState] = useState(homeworkList || []);
-    const {user} = useUser();
+    const { user, error, isLoading } = useUser();
     const [showAddNewHomework, setShowAddNewHomework] = useState(false);
+
+    // Redirect to login if not authenticated
+    useEffect(() => {
+        if (!isLoading && !user) {
+            window.location.href = '/api/auth/login';
+        }
+    }, [user, isLoading]);
+
+    // Show loading state while checking authentication
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-gray-600">Loading...</div>
+            </div>
+        );
+    }
+
+    // Don't render if not authenticated
+    if (!user) {
+        return null;
+    }
 
 
 
@@ -34,10 +55,7 @@ export default function Add({homeworkList}) {
                 alert("Failed to add homework: " + (result.error || response.statusText));
             } else {
                 alert("Homework added!");
-                const displayName =
-  user.user?.fullName ||
-  `${user.user?.firstName || ""} ${user.user?.lastName || ""}`.trim() ||
-  "Unknown";
+                const displayName = user.name || user.email?.split('@')[0] || "Unknown";
                 const newHomework = {
                     homework_text: homework,
                     due_date: dueDate,
@@ -87,15 +105,15 @@ export default function Add({homeworkList}) {
                                 <div className="flex items-center gap-4">
                                     <div className="relative">
                                         <img
-                                            src={user?.imageUrl}
-                                            alt={user?.fullName}
+                                            src={user?.picture}
+                                            alt={user?.name || 'User'}
                                             className="w-16 h-16 rounded-full border-2 border-blue-500/30 shadow-lg"
                                         />
                                         <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-slate-800"></div>
                                     </div>
                                     <div>
                                         <h1 className="text-3xl font-bold text-white mb-1">
-                                            Welcome back, {user?.fullName || 'Unknown'} 👋
+                                            Welcome back, {user?.name || 'Unknown'} 👋
                                         </h1>
                                         <p className="text-white">Project S208</p>
                                     </div>
