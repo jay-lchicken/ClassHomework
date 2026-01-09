@@ -1,6 +1,4 @@
-import { getAuth } from "@clerk/nextjs/server";
 import pool from "@/lib/db";
-import { NextResponse } from "next/server";
 import {DateTime} from "luxon";
 
 export async function GET(req) {

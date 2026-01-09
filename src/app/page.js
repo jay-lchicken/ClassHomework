@@ -1,26 +1,21 @@
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-import HomePage from "@/app/Home";
-import { Suspense } from "react";
 import Add from "@/app/Home";
-import {cookies} from "next/headers";
+import { cookies } from "next/headers";
+import pool from "@/lib/db";
 async function getHomeworkList() {
     try {
-        const cookieStore = await cookies();
+        const insertResult = await pool.query(
+    `SELECT *
+FROM homework
+WHERE due_date::DATE >= (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Singapore')::DATE
+ORDER BY due_date::DATE ASC;`
+  );
+        return insertResult.rows;
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/getHomework`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-              "Cookie": cookieStore
-          },
-        });
-        const data = await response.json();
-        return data;
-      } catch (error) {
-        console.error("Failed to fetch events:", error);
-      } finally {
-      }
+    }
+    catch (error) {
+        console.error("Error fetching homework list:", error);
+        return [];
+    }
 }
 
 export default async function Home() {

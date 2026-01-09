@@ -5,7 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5f98af34-a344-488a-bedc-3ec50ff87246" name="Changes" comment="update homework UI to hide 'Add New Homework' button and adjust workspace configuration">
+      <change afterPath="$PROJECT_DIR$/src/lib/auth0.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/middleware.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/Home.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/Home.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/addHomework/route.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/addHomework/route.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/getHomework/route.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/sendAnnouncement/route.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/sendAnnouncement/route.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/layout.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/page.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/page.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/middleware.js" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,11 +27,13 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JavaScript File" />
+        <option value="TypeScript File" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
   </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />

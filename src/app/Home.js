@@ -2,7 +2,7 @@
 import Image from "next/image";
 import {useState, useEffect} from "react";
 import {Calendar, BookOpen, Plus, Trash2, Clock} from 'lucide-react';
-import {SignedIn, SignedOut, SignInButton, SignUpButton, useUser} from '@clerk/nextjs';
+import { useUser } from "@auth0/nextjs-auth0/client";
 import {DateTime} from "luxon";
 export default function Add({homeworkList}) {
 
@@ -10,7 +10,7 @@ export default function Add({homeworkList}) {
     const [dueDate, setDueDate] = useState("");
     const [isAdding, setIsAdding] = useState(false);
     const [homeworkListState, setHomeworkListState] = useState(homeworkList || []);
-    const {user} = useUser();
+    const { user } = useUser();
     const [showAddNewHomework, setShowAddNewHomework] = useState(false);
 
 
@@ -35,8 +35,9 @@ export default function Add({homeworkList}) {
             } else {
                 alert("Homework added!");
                 const displayName =
-  user.user?.fullName ||
-  `${user.user?.firstName || ""} ${user.user?.lastName || ""}`.trim() ||
+  user?.name ||
+  user?.nickname ||
+  user?.email ||
   "Unknown";
                 const newHomework = {
                     homework_text: homework,
@@ -81,40 +82,64 @@ export default function Add({homeworkList}) {
     };
 
     return (
-        <div className=" items-center justify-center flex flex-col min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 p-4">
-            <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-8 shadow-2xl mb-8 max-w-6xl mx-auto w-[70%]">
-                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                                <div className="flex items-center gap-4">
-                                    <div className="relative">
-                                        <img
-                                            src={user?.imageUrl}
-                                            alt={user?.fullName}
-                                            className="w-16 h-16 rounded-full border-2 border-blue-500/30 shadow-lg"
-                                        />
-                                        <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-slate-800"></div>
-                                    </div>
-                                    <div>
-                                        <h1 className="text-3xl font-bold text-white mb-1">
-                                            Welcome back, {user?.fullName || 'Unknown'} 👋
-                                        </h1>
-                                        <p className="text-white">Project S208</p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center gap-2 text-sm text-white">
-                                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                    <span>Online</span>
-                                </div>
+        <div className="flex flex-col min-h-screen bg-slate-50">
+            <header className="w-full bg-white border-b border-slate-200 sticky top-0 z-40">
+                <div className="max-w-6xl mx-auto w-full px-4 sm:px-6">
+                    <div className="h-16 flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center text-white font-semibold">
+                                S
+                            </div>
+                            <div className="leading-tight">
+                                <div className="text-sm text-slate-500">Project</div>
+                                <h1 className="text-base font-semibold text-slate-900">S304</h1>
                             </div>
                         </div>
-            <div className="max-w-6xl mx-auto w-[70%]">
+
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2">
+                                <div className="text-right hidden sm:block">
+                                    <div className="text-sm font-medium text-slate-900">
+                                        {user?.name || "Unknown"}
+                                    </div>
+                                    <div className="text-xs text-slate-500">
+                                        {user?.email || ""}
+                                    </div>
+                                </div>
+                                <div className="relative">
+                                    {user?.picture ? (
+                                        <img
+                                            src={user.picture}
+                                            alt={user?.name || "User"}
+                                            className="w-9 h-9 rounded-full border border-slate-200 shadow-sm"
+                                        />
+                                    ) : (
+                                        <div className="w-9 h-9 rounded-full border border-slate-200 shadow-sm bg-slate-100 flex items-center justify-center text-slate-700 text-sm font-semibold">
+                                            {(user?.name || "U").slice(0, 1).toUpperCase()}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <a
+                                href="/auth/logout"
+                                className="hidden sm:inline-flex items-center justify-center text-sm font-medium text-slate-700 hover:text-slate-900 border border-slate-300 hover:border-slate-400 px-3 py-1.5 rounded-lg transition-colors"
+                            >
+                                Log out
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div className="max-w-6xl mx-auto w-full p-4 sm:p-6">
 
 
 
                 {homeworkListState.length > 0 && (
                     <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-                        <div className="px-6 py-4 bg-gradient-to-r from-indigo-500 to-purple-600">
-                            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                        <div className="px-6 py-4 bg-slate-100 border-b border-slate-200">
+                            <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
                                 <BookOpen className="w-6 h-6"/>
                                 Your Homework List ({homeworkListState.length})
                             </h2>
@@ -185,7 +210,7 @@ export default function Add({homeworkList}) {
                 <div className={"fixed bottom-4 right-4 z-50"}>
                     <button
                         onClick={() => setShowAddNewHomework(true)}
-                        className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-full shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-full shadow-sm transition-colors duration-200 flex items-center justify-center gap-2"
                     >
                         <Plus className="w-5 h-5"/>
                         Add Homework
@@ -202,7 +227,7 @@ export default function Add({homeworkList}) {
 
                 {showAddNewHomework && (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-gray-100 p-8 relative">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-lg border border-gray-200 p-8 relative">
             <button
                 className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold"
                 onClick={() => setShowAddNewHomework(false)}
@@ -211,8 +236,8 @@ export default function Add({homeworkList}) {
                 &times;
             </button>
             <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full mb-4 shadow-lg">
-                    <BookOpen className="w-8 h-8 text-white"/>
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-100 rounded-full mb-4">
+                    <BookOpen className="w-8 h-8 text-slate-700"/>
                 </div>
                 <h1 className="text-3xl font-bold text-gray-800 mb-2">Add Homework</h1>
             </div>
@@ -259,7 +284,7 @@ export default function Add({homeworkList}) {
                         addHomework();
                     }}
                     disabled={isAdding}
-                    className="disabled:opacity-50 w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                    className="disabled:opacity-50 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-sm flex items-center justify-center gap-2"
                 >
                     <Plus className="w-5 h-5"/>
                     {isAdding ? "Adding..." : "Add Homework"}
