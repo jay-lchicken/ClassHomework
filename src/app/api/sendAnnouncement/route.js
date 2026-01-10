@@ -7,42 +7,67 @@ export async function GET(req) {
     `SELECT *
 FROM homework
 WHERE due_date::DATE >= (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Singapore')::DATE
-ORDER BY due_date::DATE ASC;`
+ORDER BY subject ASC, due_date::DATE ASC;`
   );
-  const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        });
-    };
-const getDaysUntilDue = (dueDateStr) => {
+
+  const formatDueDay = (dueDateStr) => {
     const todaySGT = DateTime.now().setZone("Asia/Singapore").startOf("day");
     const dueSGT = DateTime.fromISO(dueDateStr, { zone: "Asia/Singapore" }).startOf("day");
     const diffDays = Math.ceil(dueSGT.diff(todaySGT, "days").days);
-    return diffDays;
-};
-  var message = "Hello. These are the upcoming homework that are due soon. You may add to the homework list @ https://class-homework.vercel.app/ : "
-  if (insertResult.rows.length === 0) {
-      message+=`\nNo homework has been added! `
-  }else {
-      for (let i = 0;    i < insertResult.rows.length; i++) {
+    
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "Tomorrow";
+    
+    return dueSGT.toFormat("d MMM");
+  };
 
-    const row = insertResult.rows[i];
-        const daysUntilDue = getDaysUntilDue(row.due_date);
+  const todayStr = new Date().toLocaleDateString('en-US', {
+    day: 'numeric',
+    month: 'short'
+  });
 
-    message += `\n${i+1}. ${row.homework_text} - Due: ${formatDate(row.due_date)}, ${daysUntilDue < 0
-                                                            ? `${Math.abs(daysUntilDue)} days overdue`
-                                                            : daysUntilDue === 0
-                                                            ? "Today"
-                                                            : daysUntilDue === 1
-                                                            ? "Tomorrow"
-                                                            : `${daysUntilDue} days left`
-                         
-                                                        } (By: ${row.name.slice(0,4)}.)`;
+  const subjectMap = {};
+  insertResult.rows.forEach(row => {
+    const subject = row.subject || "Others";
+    if (!subjectMap[subject]) {
+      subjectMap[subject] = [];
+    }
+    subjectMap[subject].push(row);
+  });
 
-  }
-  }
+  const subject = await pool.query('SELECT * FROM subjects;');
+  const allSubjects =  subject.rows.map(subj => subj.name);
+
+
+
+  let message = `*${todayStr}*\n\n`;
+
+  allSubjects.forEach(subject => {
+    message += `${subject}\n`;
+
+    if (subjectMap[subject] && subjectMap[subject].length > 0) {
+      subjectMap[subject].forEach(row => {
+        const dueDay = formatDueDay(row.due_date);
+        message += `• ${row.homework_text} (${dueDay})\n`;
+      });
+    } else {
+      message += `(no homework)\n`;
+    }
+
+    message += `\n`;
+  });
+  message += `Others`;
+
+    if (subjectMap["Others"] && subjectMap["Others"].length > 0) {
+      subjectMap["Others"].forEach(row => {
+        const dueDay = formatDueDay(row.due_date);
+        message += `• ${row.homework_text} (${dueDay})\n`;
+      });
+    } else {
+      message += `(no homework)\n`;
+    }
+
+    message += `\n`;
 
   return new Response(JSON.stringify(message), {
     headers: { "Content-Type": "application/json" },
