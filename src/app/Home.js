@@ -1,17 +1,19 @@
 "use client";
 import Image from "next/image";
 import {useState, useEffect} from "react";
-import {Calendar, BookOpen, Plus, Trash2, Clock} from 'lucide-react';
+import {Calendar, BookOpen, Plus, Trash2, Clock, Badge} from 'lucide-react';
 import { useUser } from "@auth0/nextjs-auth0/client";
 import {DateTime} from "luxon";
-export default function Add({homeworkList}) {
+export default function Add({homeworkList, subjects}) {
 
     const [homework, setHomework] = useState("");
     const [dueDate, setDueDate] = useState("");
+    const [selectedSubject, setSelectedSubject] = useState("");
     const [isAdding, setIsAdding] = useState(false);
     const [homeworkListState, setHomeworkListState] = useState(homeworkList || []);
     const { user } = useUser();
     const [showAddNewHomework, setShowAddNewHomework] = useState(false);
+    
 
 
 
@@ -25,6 +27,7 @@ export default function Add({homeworkList}) {
                 body: JSON.stringify({
                     homework: homework,
                     due_date: dueDate,
+                    subject: selectedSubject,
                 }),
             });
 
@@ -43,10 +46,12 @@ export default function Add({homeworkList}) {
                     homework_text: homework,
                     due_date: dueDate,
                     name: displayName,
+                    subject: selectedSubject,
                 };
                 setHomeworkListState(prev => [...prev, newHomework]);
                 setHomework("");
                 setDueDate("");
+                setSelectedSubject("");
             }
         } catch (err) {
             alert("ERROR! Failed to add homework" + (err.message || err));
@@ -156,8 +161,12 @@ export default function Add({homeworkList}) {
                                             Due Date
                                         </th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 border-b">
+                                            Subject
+                                        </th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 border-b">
                                             Added by
                                         </th>
+
 
                                         <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700 border-b">
                                             Status
@@ -179,6 +188,11 @@ export default function Add({homeworkList}) {
                                                     <div className="text-sm text-gray-700">
                                                         {formatDate(item.due_date)}
                                                     </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                                                        {item.subject || "Others"}
+                                                    </span>
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <div className="text-sm text-gray-700">
@@ -274,10 +288,33 @@ export default function Add({homeworkList}) {
                         />
                     </div>
                 </div>
+                <div className="space-y-2">
+                    <label htmlFor="subject" className="block text-sm font-semibold text-gray-700">
+                        Subject
+                    </label>
+                    <select
+                        id="subject"
+                        value={selectedSubject}
+                        onChange={(e) => setSelectedSubject(e.target.value)}
+                        className="text-black w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                        required
+                    >
+                        <option value="" disabled>Select a subject</option>
+
+                        {subjects.map((subject) => (
+                            <option key={subject} value={subject}>
+                                {subject}
+                            </option>
+
+                        ))}
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+
                 <button
                     type="submit"
                     onClick={() => {
-                        if (!homework || !dueDate) {
+                        if (!homework || !dueDate || !selectedSubject) {
                             alert("Please fill in all fields.");
                             return;
                         }

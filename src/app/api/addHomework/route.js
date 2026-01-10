@@ -6,7 +6,7 @@ export async function POST(req) {
   const session = await auth0.getSession();
       const body = await req.json();
 
-    const { homework, due_date } = body;
+    const { homework, due_date, subject } = body;
 
   if (!session?.user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -22,19 +22,27 @@ export async function POST(req) {
     session.user.name ||
     session.user.nickname ||
     email;
-  if ( !homework || !due_date || !email) {
+  if ( !homework || !due_date || !subject || !email) {
      return NextResponse.json({ error: 'Not all fields are field' }, { status: 401 });
+  }
+  const formattedSubject = subject === "Others" ? null : subject;
+  console.log(formattedSubject);
+
+
+  try{
+    const insertResult = await pool.query(
+      `INSERT INTO homework (homework_text, due_date, email, name, subject)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING *`,
+      [homework, due_date, email, displayName, formattedSubject]
+    );
+    return new Response(JSON.stringify(insertResult.rows[0]), {
+    headers: { "Content-Type": "application/json" },
+  });
+  }catch (error) {
+    console.error("Error inserting homework:", error);
+    return NextResponse.json({ error: 'Database error' }, { status: 500 });
   }
 
 
-  const insertResult = await pool.query(
-      `INSERT INTO homework (homework_text, due_date, email, name)
-       VALUES ($1, $2, $3, $4)
-       RETURNING *`,
-      [homework, due_date, email, displayName ]
-    );
-
-  return new Response(JSON.stringify(insertResult.rows[0]), {
-    headers: { "Content-Type": "application/json" },
-  });
 }

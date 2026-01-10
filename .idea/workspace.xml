@@ -4,19 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5f98af34-a344-488a-bedc-3ec50ff87246" name="Changes" comment="update homework UI to hide 'Add New Homework' button and adjust workspace configuration">
-      <change afterPath="$PROJECT_DIR$/src/lib/auth0.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/middleware.ts" afterDir="false" />
+    <list default="true" id="5f98af34-a344-488a-bedc-3ec50ff87246" name="Changes" comment="integrate Auth0 for authentication and refactor homework API routes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/Home.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/Home.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/api/addHomework/route.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/addHomework/route.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/api/getHomework/route.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/api/sendAnnouncement/route.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/sendAnnouncement/route.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/layout.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/page.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/page.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/middleware.js" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -124,6 +116,7 @@
       <workItem from="1752382940629" duration="22000" />
       <workItem from="1754708961146" duration="1328000" />
       <workItem from="1754710527630" duration="316000" />
+      <workItem from="1768003395047" duration="1496000" />
     </task>
     <task id="LOCAL-00001" summary="initialize project with Next.js, PostgreSQL, and Tailwind CSS setup">
       <option name="closed" value="true" />
@@ -197,11 +190,25 @@
       <option name="project" value="LOCAL" />
       <updated>1754710576336</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="integrate Auth0 for authentication and refactor homework API routes">
+      <option name="closed" value="true" />
+      <created>1767961085927</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1767961085927</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+    <option name="exactExcludedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/src/middleware.js" />
+        <option value="$PROJECT_DIR$/src/lib/auth0.js" />
+      </list>
+    </option>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -224,6 +231,7 @@
     <MESSAGE value="refactor date handling in homework API to use Luxon for accurate due date calculations" />
     <MESSAGE value="enhance homework UI with user greeting and add homework button. UI Improvement" />
     <MESSAGE value="update homework UI to hide 'Add New Homework' button and adjust workspace configuration" />
-    <option name="LAST_COMMIT_MESSAGE" value="update homework UI to hide 'Add New Homework' button and adjust workspace configuration" />
+    <MESSAGE value="integrate Auth0 for authentication and refactor homework API routes" />
+    <option name="LAST_COMMIT_MESSAGE" value="integrate Auth0 for authentication and refactor homework API routes" />
   </component>
 </project>
