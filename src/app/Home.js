@@ -176,7 +176,7 @@ export default function Add({homeworkList, subjects}) {
                                 Your Homework List
                             </CardTitle>
                             <CardDescription className="text-slate-600">
-                                {homeworkListState.length} assignments tracked
+                                {homeworkListState.length} homework
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="p-0">
