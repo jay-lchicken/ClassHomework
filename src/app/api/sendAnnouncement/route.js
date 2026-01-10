@@ -38,36 +38,38 @@ ORDER BY subject ASC, due_date::DATE ASC;`
   const subject = await pool.query('SELECT * FROM subjects;');
   const allSubjects =  subject.rows.map(subj => subj.name);
 
-
-
   let message = `*${todayStr}*\n\n`;
+  const noHomeworkSubjects = [];
 
   allSubjects.forEach(subject => {
-    message += `${subject}\n`;
-
     if (subjectMap[subject] && subjectMap[subject].length > 0) {
+      message += `${subject}\n`;
       subjectMap[subject].forEach(row => {
         const dueDay = formatDueDay(row.due_date);
         message += `• ${row.homework_text} (${dueDay})\n`;
       });
+      message += `\n`;
     } else {
-      message += `(no homework)\n`;
+      noHomeworkSubjects.push(subject);
     }
-
-    message += `\n`;
   });
-  message += `Others`;
 
-    if (subjectMap["Others"] && subjectMap["Others"].length > 0) {
-      subjectMap["Others"].forEach(row => {
-        const dueDay = formatDueDay(row.due_date);
-        message += `• ${row.homework_text} (${dueDay})\n`;
-      });
-    } else {
-      message += `(no homework)\n`;
-    }
-
+  if (subjectMap["Others"] && subjectMap["Others"].length > 0) {
+    message += `Others\n`;
+    subjectMap["Others"].forEach(row => {
+      const dueDay = formatDueDay(row.due_date);
+      message += `• ${row.homework_text} (${dueDay})\n`;
+    });
     message += `\n`;
+  }
+
+  if (noHomeworkSubjects.length > 0) {
+    message += `*No Homework:*\n`;
+    noHomeworkSubjects.forEach(subject => {
+      message += `• ${subject}\n`;
+    });
+  }
+  message += `\n\n (This is an automated message. If you would like to add homework, go to https://hw.s304.xyz)`;
 
   return new Response(JSON.stringify(message), {
     headers: { "Content-Type": "application/json" },

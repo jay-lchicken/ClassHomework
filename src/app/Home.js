@@ -1,9 +1,21 @@
 "use client";
-import Image from "next/image";
-import {useState, useEffect} from "react";
-import {Calendar, BookOpen, Plus, Trash2, Clock, Badge} from 'lucide-react';
+import { useState } from "react";
+import { Calendar, BookOpen, Plus, Clock } from "lucide-react";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import {DateTime} from "luxon";
+import { DateTime } from "luxon";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/hooks/use-toast";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 export default function Add({homeworkList, subjects}) {
 
     const [homework, setHomework] = useState("");
@@ -12,6 +24,7 @@ export default function Add({homeworkList, subjects}) {
     const [isAdding, setIsAdding] = useState(false);
     const [homeworkListState, setHomeworkListState] = useState(homeworkList || []);
     const { user } = useUser();
+    const { toast } = useToast();
     const [showAddNewHomework, setShowAddNewHomework] = useState(false);
     
 
@@ -34,9 +47,16 @@ export default function Add({homeworkList, subjects}) {
             const result = await response.json();
 
             if (!response.ok) {
-                alert("Failed to add homework: " + (result.error || response.statusText));
+                toast({
+                    title: "Failed to add homework",
+                    description: result.error || response.statusText,
+                    variant: "destructive",
+                });
             } else {
-                alert("Homework added!");
+                toast({
+                    title: "Homework added",
+                    description: `${homework} · ${selectedSubject}`,
+                });
                 const displayName =
   user?.name ||
   user?.nickname ||
@@ -52,9 +72,14 @@ export default function Add({homeworkList, subjects}) {
                 setHomework("");
                 setDueDate("");
                 setSelectedSubject("");
+                setShowAddNewHomework(false);
             }
         } catch (err) {
-            alert("ERROR! Failed to add homework" + (err.message || err));
+            toast({
+                title: "Error adding homework",
+                description: err?.message || String(err),
+                variant: "destructive",
+            });
             console.error(err);
         } finally {
             setIsAdding(false);
@@ -81,10 +106,10 @@ export default function Add({homeworkList, subjects}) {
 
     const getDueDateColor = (dueDate) => {
         const days = getDaysUntilDue(dueDate);
-        if (days < 0) return "text-red-600 bg-red-50";
-        if (days <= 1) return "text-orange-600 bg-orange-50";
-        if (days <= 3) return "text-yellow-600 bg-yellow-50";
-        return "text-green-600 bg-green-50";
+        if (days < 0) return "text-red-600 bg-red-50 hover:bg-red-50 border-transparent";
+        if (days <= 1) return "text-orange-600 bg-orange-50 hover:bg-orange-50 border-transparent";
+        if (days <= 3) return "text-yellow-600 bg-yellow-50 hover:bg-yellow-50 border-transparent";
+        return "text-green-600 bg-green-50 hover:bg-green-50 border-transparent";
     };
 
     return (
@@ -112,27 +137,28 @@ export default function Add({homeworkList, subjects}) {
                                         {user?.email || ""}
                                     </div>
                                 </div>
-                                <div className="relative">
-                                    {user?.picture ? (
-                                        <img
-                                            src={user.picture}
-                                            alt={user?.name || "User"}
-                                            className="w-9 h-9 rounded-full border border-slate-200 shadow-sm"
-                                        />
-                                    ) : (
-                                        <div className="w-9 h-9 rounded-full border border-slate-200 shadow-sm bg-slate-100 flex items-center justify-center text-slate-700 text-sm font-semibold">
-                                            {(user?.name || "U").slice(0, 1).toUpperCase()}
-                                        </div>
-                                    )}
-                                </div>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <button type="button" className="rounded-full">
+                                            <Avatar className="h-9 w-9 border border-slate-200 shadow-sm">
+                                                <AvatarImage src={user?.picture} alt={user?.name || "User"} />
+                                                <AvatarFallback className="bg-slate-100 text-slate-700 text-sm font-semibold">
+                                                    {(user?.name || "U").slice(0, 1).toUpperCase()}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                        </button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="w-48">
+                                        <DropdownMenuLabel>
+                                            {user?.name || "Account"}
+                                        </DropdownMenuLabel>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem asChild>
+                                            <a href="/auth/logout">Log out</a>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                             </div>
-
-                            <a
-                                href="/auth/logout"
-                                className="hidden sm:inline-flex items-center justify-center text-sm font-medium text-slate-700 hover:text-slate-900 border border-slate-300 hover:border-slate-400 px-3 py-1.5 rounded-lg transition-colors"
-                            >
-                                Log out
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -143,66 +169,65 @@ export default function Add({homeworkList, subjects}) {
 
 
                 {homeworkListState.length > 0 && (
-                    <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-                        <div className="px-6 py-4 bg-slate-100 border-b border-slate-200">
-                            <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
+                    <Card className="overflow-hidden">
+                        <CardHeader className="bg-slate-100 border-b border-slate-200">
+                            <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
                                 <BookOpen className="w-6 h-6"/>
-                                Your Homework List ({homeworkListState.length})
-                            </h2>
-                        </div>
-
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 border-b">
+                                Your Homework List
+                            </CardTitle>
+                            <CardDescription className="text-slate-600">
+                                {homeworkListState.length} assignments tracked
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-0">
+                            <Table>
+                                <TableHeader className="bg-gray-50">
+                                    <TableRow>
+                                        <TableHead className="px-6 py-4 text-sm font-semibold text-gray-700">
                                             Assignment
-                                        </th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 border-b">
+                                        </TableHead>
+                                        <TableHead className="px-6 py-4 text-sm font-semibold text-gray-700">
                                             Due Date
-                                        </th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 border-b">
+                                        </TableHead>
+                                        <TableHead className="px-6 py-4 text-sm font-semibold text-gray-700">
                                             Subject
-                                        </th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 border-b">
+                                        </TableHead>
+                                        <TableHead className="px-6 py-4 text-sm font-semibold text-gray-700">
                                             Added by
-                                        </th>
-
-
-                                        <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700 border-b">
+                                        </TableHead>
+                                        <TableHead className="px-6 py-4 text-center text-sm font-semibold text-gray-700">
                                             Status
-                                        </th>
-
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-200">
+                                        </TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
                                     {homeworkListState.map((item, index) => {
                                         const daysUntilDue = getDaysUntilDue(item.due_date);
                                         return (
-                                            <tr key={item.id || index} className="hover:bg-gray-50 transition-colors">
-                                                <td className="px-6 py-4">
+                                            <TableRow key={item.id || index}>
+                                                <TableCell className="px-6 py-4">
                                                     <div className="text-sm font-medium text-gray-900">
                                                         {item.homework_text}
                                                     </div>
-                                                </td>
-                                                <td className="px-6 py-4">
+                                                </TableCell>
+                                                <TableCell className="px-6 py-4">
                                                     <div className="text-sm text-gray-700">
                                                         {formatDate(item.due_date)}
                                                     </div>
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                                                </TableCell>
+                                                <TableCell className="px-6 py-4">
+                                                    <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">
                                                         {item.subject || "Others"}
-                                                    </span>
-                                                </td>
-                                                <td className="px-6 py-4">
+                                                    </Badge>
+                                                </TableCell>
+                                                <TableCell className="px-6 py-4">
                                                     <div className="text-sm text-gray-700">
                                                         {item.name}
                                                     </div>
-                                                </td>
-                                                <td className="px-6 py-4 text-center">
-                                                    <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${getDueDateColor(item.due_date)}`}>
-                                                        <Clock className="w-3 h-3"/>
+                                                </TableCell>
+                                                <TableCell className="px-6 py-4 text-center">
+                                                    <Badge className={`inline-flex items-center gap-1 ${getDueDateColor(item.due_date)}`}>
+                                                        <Clock className="h-3 w-3"/>
                                                         {daysUntilDue < 0
                                                             ? `${Math.abs(daysUntilDue)} days overdue`
                                                             : daysUntilDue === 0
@@ -211,127 +236,110 @@ export default function Add({homeworkList, subjects}) {
                                                             ? "Due tomorrow"
                                                             : `${daysUntilDue} days left`
                                                         }
-                                                    </span>
-                                                </td>
-
-                                            </tr>
+                                                    </Badge>
+                                                </TableCell>
+                                            </TableRow>
                                         );
                                     })}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
                 )}
-                <div className={"fixed bottom-4 right-4 z-50"}>
-                    <button
-                        onClick={() => setShowAddNewHomework(true)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-full shadow-sm transition-colors duration-200 flex items-center justify-center gap-2"
-                    >
-                        <Plus className="w-5 h-5"/>
-                        Add Homework
-                    </button>
-                </div>
+                <Dialog open={showAddNewHomework} onOpenChange={setShowAddNewHomework}>
+                    <DialogTrigger asChild>
+                        <Button className="fixed bottom-4 right-4 z-50 rounded-full shadow-sm">
+                            <Plus className="h-4 w-4" />
+                            Add Homework
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-lg">
+                        <DialogHeader>
+                            <div className="inline-flex items-center justify-center w-12 h-12 bg-slate-100 rounded-full mb-2">
+                                <BookOpen className="h-6 w-6 text-slate-700" />
+                            </div>
+                            <DialogTitle>Add Homework</DialogTitle>
+                            <DialogDescription>
+                                Track assignments and due dates in one place.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="homework">Assignment</Label>
+                                <Input
+                                    id="homework"
+                                    type="text"
+                                    placeholder="Enter your homework assignment..."
+                                    value={homework}
+                                    onChange={(e) => setHomework(e.target.value)}
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="dueDate">Due Date</Label>
+                                <div className="relative">
+                                    <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                                    <Input
+                                        id="dueDate"
+                                        type="date"
+                                        value={dueDate}
+                                        onChange={(e) => setDueDate(e.target.value)}
+                                        className="pl-9"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="subject">Subject</Label>
+                                <Select value={selectedSubject} onValueChange={setSelectedSubject}>
+                                    <SelectTrigger id="subject">
+                                        <SelectValue placeholder="Select a subject" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {subjects.map((subject) => (
+                                            <SelectItem key={subject} value={subject}>
+                                                {subject}
+                                            </SelectItem>
+                                        ))}
+                                        <SelectItem value="Others">Others</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button
+                                type="button"
+                                onClick={() => {
+                                    if (!homework || !dueDate || !selectedSubject) {
+                                        toast({
+                                            title: "Missing details",
+                                            description: "Please fill in all fields.",
+                                            variant: "destructive",
+                                        });
+                                        return;
+                                    }
+                                    addHomework();
+                                }}
+                                disabled={isAdding}
+                            >
+                                <Plus className="h-4 w-4" />
+                                {isAdding ? "Adding..." : "Add Homework"}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
 
                 {homeworkListState.length === 0 && (
-                    <div className="text-center py-12">
-                        <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4"/>
-                        <h3 className="text-lg font-medium text-gray-600 mb-2">No homework yet</h3>
-                        <p className="text-gray-500">Add the first homework using the form above.</p>
-                    </div>
+                    <Card className="mt-6">
+                        <CardContent className="py-12 text-center">
+                            <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-4"/>
+                            <h3 className="text-lg font-medium text-gray-600 mb-2">No homework yet</h3>
+                            <p className="text-gray-500">Add the first homework using the button below.</p>
+                        </CardContent>
+                    </Card>
                 )}
-
-                {showAddNewHomework && (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-lg border border-gray-200 p-8 relative">
-            <button
-                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold"
-                onClick={() => setShowAddNewHomework(false)}
-                aria-label="Close"
-            >
-                &times;
-            </button>
-            <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-100 rounded-full mb-4">
-                    <BookOpen className="w-8 h-8 text-slate-700"/>
-                </div>
-                <h1 className="text-3xl font-bold text-gray-800 mb-2">Add Homework</h1>
             </div>
-            <div className="space-y-6">
-                <div className="space-y-2">
-                    <label htmlFor="homework" className="block text-sm font-semibold text-gray-700">
-                        Assignment
-                    </label>
-                    <div className="relative">
-                        <input
-                            id="homework"
-                            type="text"
-                            placeholder="Enter your homework assignment..."
-                            value={homework}
-                            onChange={(e) => setHomework(e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 text-black"
-                            required
-                        />
-                    </div>
-                </div>
-                <div className="space-y-2">
-                    <label htmlFor="dueDate" className="block text-sm font-semibold text-gray-700">
-                        Due Date
-                    </label>
-                    <div className="relative">
-                        <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"/>
-                        <input
-                            id="dueDate"
-                            type="date"
-                            value={dueDate}
-                            onChange={(e) => setDueDate(e.target.value)}
-                            className="text-black w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
-                            required
-                        />
-                    </div>
-                </div>
-                <div className="space-y-2">
-                    <label htmlFor="subject" className="block text-sm font-semibold text-gray-700">
-                        Subject
-                    </label>
-                    <select
-                        id="subject"
-                        value={selectedSubject}
-                        onChange={(e) => setSelectedSubject(e.target.value)}
-                        className="text-black w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
-                        required
-                    >
-                        <option value="" disabled>Select a subject</option>
-
-                        {subjects.map((subject) => (
-                            <option key={subject} value={subject}>
-                                {subject}
-                            </option>
-
-                        ))}
-                        <option value="Others">Others</option>
-                    </select>
-                </div>
-
-                <button
-                    type="submit"
-                    onClick={() => {
-                        if (!homework || !dueDate || !selectedSubject) {
-                            alert("Please fill in all fields.");
-                            return;
-                        }
-                        addHomework();
-                    }}
-                    disabled={isAdding}
-                    className="disabled:opacity-50 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-sm flex items-center justify-center gap-2"
-                >
-                    <Plus className="w-5 h-5"/>
-                    {isAdding ? "Adding..." : "Add Homework"}
-                </button>
-            </div>
-        </div>
-    </div>
-)}
-            </div>
+            <Toaster />
         </div>
     );
 }

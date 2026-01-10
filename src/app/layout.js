@@ -59,7 +59,7 @@ export default async function RootLayout({ children }) {
                     href="/auth/login"
                     className="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition-colors duration-200 mb-4"
                   >
-                    Continue with Auth0
+                    Continue with Google
                   </a>
 
                   <div className="relative mb-4">
