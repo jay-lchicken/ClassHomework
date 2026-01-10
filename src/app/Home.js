@@ -64,7 +64,8 @@ export default function Add({homeworkList, subjects}) {
 
 
     const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString('en-US', {
+        const [year, month, day] = dateString.split('-');
+        return new Date(year, month - 1, day).toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'short',
             day: 'numeric'
