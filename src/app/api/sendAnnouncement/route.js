@@ -46,7 +46,8 @@ ORDER BY subject ASC, due_date::DATE ASC;`
       message += `${subject}\n`;
       subjectMap[subject].forEach(row => {
         const dueDay = formatDueDay(row.due_date);
-        message += `• ${row.homework_text} (${dueDay})\n`;
+        const homeworkText = dueDay == "Today" ? `_*${row.homework_text}*_` : dueDay == "Tomorrow" ? `*${row.homework_text}*` : row.homework_text;
+        message += `• ${homeworkText} (${dueDay})\n`;
       });
       message += `\n`;
     } else {

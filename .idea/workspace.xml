@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5f98af34-a344-488a-bedc-3ec50ff87246" name="Changes" comment="Update homework description in Home.js for clarity" />
+    <list default="true" id="5f98af34-a344-488a-bedc-3ec50ff87246" name="Changes" comment="Update workspace configuration to reflect homework description changes in Home.js">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/badge.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/badge.jsx" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -67,6 +70,7 @@
       <recent name="$PROJECT_DIR$/src/app" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/app" />
       <recent name="$PROJECT_DIR$/src" />
     </key>
   </component>
@@ -112,6 +116,9 @@
       <workItem from="1754708961146" duration="1328000" />
       <workItem from="1754710527630" duration="316000" />
       <workItem from="1768003395047" duration="1496000" />
+      <workItem from="1768034511283" duration="2076000" />
+      <workItem from="1768052294931" duration="3000" />
+      <workItem from="1768373262442" duration="3918000" />
     </task>
     <task id="LOCAL-00001" summary="initialize project with Next.js, PostgreSQL, and Tailwind CSS setup">
       <option name="closed" value="true" />
@@ -225,14 +232,21 @@
       <option name="project" value="LOCAL" />
       <updated>1768027764498</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Update workspace configuration to reflect homework description changes in Home.js">
+      <option name="closed" value="true" />
+      <created>1768034568499</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1768034568499</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
     <option name="exactExcludedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/middleware.js" />
         <option value="$PROJECT_DIR$/src/lib/auth0.js" />
       </list>
     </option>
@@ -261,6 +275,7 @@
     <MESSAGE value="integrate Auth0 for authentication and refactor homework API routes" />
     <MESSAGE value="Refactor homework retrieval to group by subject and format due dates" />
     <MESSAGE value="Update homework description in Home.js for clarity" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update homework description in Home.js for clarity" />
+    <MESSAGE value="Update workspace configuration to reflect homework description changes in Home.js" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update workspace configuration to reflect homework description changes in Home.js" />
   </component>
 </project>

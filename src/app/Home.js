@@ -186,14 +186,15 @@ export default function Add({homeworkList, subjects}) {
                                         <TableHead className="px-6 py-4 text-sm font-semibold text-gray-700">
                                             Assignment
                                         </TableHead>
-                                        <TableHead className="px-6 py-4 text-sm font-semibold text-gray-700">
-                                            Due Date
-                                        </TableHead>
+
                                         <TableHead className="px-6 py-4 text-sm font-semibold text-gray-700">
                                             Subject
                                         </TableHead>
                                         <TableHead className="px-6 py-4 text-sm font-semibold text-gray-700">
                                             Added by
+                                        </TableHead>
+                                        <TableHead className="px-6 py-4 text-sm font-semibold text-gray-700">
+                                            Due Date
                                         </TableHead>
                                         <TableHead className="px-6 py-4 text-center text-sm font-semibold text-gray-700">
                                             Status
@@ -210,11 +211,7 @@ export default function Add({homeworkList, subjects}) {
                                                         {item.homework_text}
                                                     </div>
                                                 </TableCell>
-                                                <TableCell className="px-6 py-4">
-                                                    <div className="text-sm text-gray-700">
-                                                        {formatDate(item.due_date)}
-                                                    </div>
-                                                </TableCell>
+
                                                 <TableCell className="px-6 py-4">
                                                     <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">
                                                         {item.subject || "Others"}
@@ -223,6 +220,11 @@ export default function Add({homeworkList, subjects}) {
                                                 <TableCell className="px-6 py-4">
                                                     <div className="text-sm text-gray-700">
                                                         {item.name}
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell className="px-6 py-4">
+                                                    <div className="text-sm text-gray-700">
+                                                        {formatDate(item.due_date)}
                                                     </div>
                                                 </TableCell>
                                                 <TableCell className="px-6 py-4 text-center">
