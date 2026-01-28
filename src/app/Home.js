@@ -21,6 +21,7 @@ export default function Add({homeworkList, subjects}) {
     const [homework, setHomework] = useState("");
     const [dueDate, setDueDate] = useState("");
     const [selectedSubject, setSelectedSubject] = useState("");
+    const [link, setLink] = useState("");
     const [isAdding, setIsAdding] = useState(false);
     const [homeworkListState, setHomeworkListState] = useState(homeworkList || []);
     const { user } = useUser();
@@ -30,6 +31,16 @@ export default function Add({homeworkList, subjects}) {
 
 
 
+
+    const isValidUrl = (value) => {
+        if (!value) return true;
+        try {
+            const url = new URL(value);
+            return url.protocol === "http:" || url.protocol === "https:";
+        } catch {
+            return false;
+        }
+    };
 
     const addHomework = async () => {
         setIsAdding(true);
@@ -41,6 +52,7 @@ export default function Add({homeworkList, subjects}) {
                     homework: homework,
                     due_date: dueDate,
                     subject: selectedSubject,
+                    link: link.trim() || null,
                 }),
             });
 
@@ -67,11 +79,13 @@ export default function Add({homeworkList, subjects}) {
                     due_date: dueDate,
                     name: displayName,
                     subject: selectedSubject,
+                    link: link.trim() || null,
                 };
                 setHomeworkListState(prev => [...prev, newHomework]);
                 setHomework("");
                 setDueDate("");
                 setSelectedSubject("");
+                setLink("");
                 setShowAddNewHomework(false);
             }
         } catch (err) {
@@ -186,6 +200,9 @@ export default function Add({homeworkList, subjects}) {
                                         <TableHead className="px-6 py-4 text-sm font-semibold text-gray-700">
                                             Assignment
                                         </TableHead>
+                                        <TableHead className="px-6 py-4 text-sm font-semibold text-gray-700">
+                                            Link
+                                        </TableHead>
 
                                         <TableHead className="px-6 py-4 text-sm font-semibold text-gray-700">
                                             Subject
@@ -210,6 +227,20 @@ export default function Add({homeworkList, subjects}) {
                                                     <div className="text-sm font-medium text-gray-900">
                                                         {item.homework_text}
                                                     </div>
+                                                </TableCell>
+                                                <TableCell className="px-6 py-4">
+                                                    {item.link ? (
+                                                        <a
+                                                            href={item.link}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="text-sm text-blue-600 hover:underline"
+                                                        >
+                                                            Open
+                                                        </a>
+                                                    ) : (
+                                                        <span className="text-sm text-gray-400">—</span>
+                                                    )}
                                                 </TableCell>
 
                                                 <TableCell className="px-6 py-4">
@@ -307,6 +338,16 @@ export default function Add({homeworkList, subjects}) {
                                     </SelectContent>
                                 </Select>
                             </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="link">Link (optional)</Label>
+                                <Input
+                                    id="link"
+                                    type="url"
+                                    placeholder="https://example.com"
+                                    value={link}
+                                    onChange={(e) => setLink(e.target.value)}
+                                />
+                            </div>
                         </div>
                         <DialogFooter>
                             <Button
@@ -316,6 +357,14 @@ export default function Add({homeworkList, subjects}) {
                                         toast({
                                             title: "Missing details",
                                             description: "Please fill in all fields.",
+                                            variant: "destructive",
+                                        });
+                                        return;
+                                    }
+                                    if (!isValidUrl(link.trim())) {
+                                        toast({
+                                            title: "Invalid link",
+                                            description: "Please enter a valid http(s) URL or leave it blank.",
                                             variant: "destructive",
                                         });
                                         return;

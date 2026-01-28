@@ -47,7 +47,8 @@ ORDER BY subject ASC, due_date::DATE ASC;`
       subjectMap[subject].forEach(row => {
         const dueDay = formatDueDay(row.due_date);
         const homeworkText = dueDay == "Today" ? `_*${row.homework_text}*_` : dueDay == "Tomorrow" ? `*${row.homework_text}*` : row.homework_text;
-        message += `• ${homeworkText} (${dueDay})\n`;
+        const linkText = row.link ? ` — ${row.link}` : "";
+        message += `• ${homeworkText} (${dueDay})${linkText}\n`;
       });
       message += `\n`;
     } else {
@@ -59,7 +60,8 @@ ORDER BY subject ASC, due_date::DATE ASC;`
     message += `Others\n`;
     subjectMap["Others"].forEach(row => {
       const dueDay = formatDueDay(row.due_date);
-      message += `• ${row.homework_text} (${dueDay})\n`;
+      const linkText = row.link ? ` — ${row.link}` : "";
+      message += `• ${row.homework_text} (${dueDay})${linkText}\n`;
     });
     message += `\n`;
   }
