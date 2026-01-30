@@ -40,44 +40,48 @@ export async function POST(req) {
       return NextResponse.json({ error: "Invalid link URL" }, { status: 400 });
     }
   }
-  const formattedSubject = subject === "Others" ? null : subject;
-  console.log(formattedSubject);
-  const code = generateRandomCode();
-  console.log(code)
+  if (normalizedLink){
+    const code = generateRandomCode();
+    console.log(code)
 
-  try {
-    const apiResponse = await fetch("https://linxy.techtime.coffee/api/links", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.JWT_TOKEN.trim()}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        link,
-        tag: String(code),
-        description: "Shortened by on Project S304",
-        baseUrl: "link.s304.xyz",
-      }),
-    });
+    try {
+      const apiResponse = await fetch("https://linxy.techtime.coffee/api/links", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.JWT_TOKEN.trim()}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          link,
+          tag: String(code),
+          description: "Shortened by on Project S304",
+          baseUrl: "link.s304.xyz",
+        }),
+      });
 
-    const text = await apiResponse.text();
-    console.log("External API status:", apiResponse.status, "body:", text);
+      const text = await apiResponse.text();
+      console.log("External API status:", apiResponse.status, "body:", text);
 
-    if (!apiResponse.ok) {
-      const errorBody = JSON.parse(text);
+      if (!apiResponse.ok) {
+        const errorBody = JSON.parse(text);
+        return NextResponse.json(
+            { error: `Failed to shorten link: ${errorBody.error}` },
+            { status: apiResponse.status }
+        );
+      }
+
+    } catch (error) {
+      console.error("Error shortening link:", error);
       return NextResponse.json(
-        { error: `Failed to shorten link: ${errorBody.error}` },
-        { status: apiResponse.status }
+          { error: `Failed to shorten link:  ${error}` },
+          { status: 500 }
       );
     }
 
-  } catch (error) {
-    console.error("Error shortening link:", error);
-    return NextResponse.json(
-        { error: `Failed to shorten link:  ${error}` },
-        { status: 500 }
-    );
   }
+  const formattedSubject = subject === "Others" ? null : subject;
+  console.log(formattedSubject);
+
 
 
   try{
