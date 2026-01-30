@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5f98af34-a344-488a-bedc-3ec50ff87246" name="Changes" comment="added url shortening">
+    <list default="true" id="5f98af34-a344-488a-bedc-3ec50ff87246" name="Changes" comment="Refactor link shortening logic to improve error handling and code clarity">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/addHomework/route.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/addHomework/route.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -131,7 +132,7 @@
       <workItem from="1769412039717" duration="41000" />
       <workItem from="1769602832650" duration="4202000" />
       <workItem from="1769667541075" duration="7000" />
-      <workItem from="1769686787188" duration="4422000" />
+      <workItem from="1769686787188" duration="5919000" />
     </task>
     <task id="LOCAL-00001" summary="initialize project with Next.js, PostgreSQL, and Tailwind CSS setup">
       <option name="closed" value="true" />
@@ -277,7 +278,15 @@
       <option name="project" value="LOCAL" />
       <updated>1769689445998</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Refactor link shortening logic to improve error handling and code clarity">
+      <option name="closed" value="true" />
+      <created>1769735352452</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1769735352452</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -317,7 +326,8 @@
     <MESSAGE value="Refactor badge component and update homework table layout for improved clarity" />
     <MESSAGE value="Add optional link field to homework and validate URL format" />
     <MESSAGE value="added url shortening" />
-    <option name="LAST_COMMIT_MESSAGE" value="added url shortening" />
+    <MESSAGE value="Refactor link shortening logic to improve error handling and code clarity" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor link shortening logic to improve error handling and code clarity" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>

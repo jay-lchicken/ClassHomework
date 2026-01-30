@@ -89,7 +89,7 @@ export async function POST(req) {
         `INSERT INTO homework (homework_text, due_date, email, name, subject, link)
          VALUES ($1, $2, $3, $4, $5, $6)
            RETURNING *`,
-        [homework, due_date, email, displayName, formattedSubject, `https://link.s304.xyz/${code}`]
+        [homework, due_date, email, displayName, formattedSubject, (code ? `https://link.s304.xyz/${code}`: null)]
     );
     return new Response(JSON.stringify(insertResult.rows[0]), {
       headers: { "Content-Type": "application/json" },
