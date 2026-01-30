@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5f98af34-a344-488a-bedc-3ec50ff87246" name="Changes" comment="Refactor link shortening logic to improve error handling and code clarity">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/api/addHomework/route.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/addHomework/route.js" afterDir="false" />
-    </list>
+    <list default="true" id="5f98af34-a344-488a-bedc-3ec50ff87246" name="Changes" comment="fixed bug" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -133,7 +130,7 @@
       <workItem from="1769602832650" duration="4202000" />
       <workItem from="1769667541075" duration="7000" />
       <workItem from="1769686787188" duration="6023000" />
-      <workItem from="1769739807108" duration="311000" />
+      <workItem from="1769739807108" duration="404000" />
     </task>
     <task id="LOCAL-00001" summary="initialize project with Next.js, PostgreSQL, and Tailwind CSS setup">
       <option name="closed" value="true" />
@@ -295,7 +292,15 @@
       <option name="project" value="LOCAL" />
       <updated>1769738596465</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="fixed bug">
+      <option name="closed" value="true" />
+      <created>1769740157284</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1769740157284</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -336,7 +341,8 @@
     <MESSAGE value="Add optional link field to homework and validate URL format" />
     <MESSAGE value="added url shortening" />
     <MESSAGE value="Refactor link shortening logic to improve error handling and code clarity" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor link shortening logic to improve error handling and code clarity" />
+    <MESSAGE value="fixed bug" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed bug" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>

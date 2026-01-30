@@ -40,8 +40,9 @@ export async function POST(req) {
       return NextResponse.json({ error: "Invalid link URL" }, { status: 400 });
     }
   }
+  const code = generateRandomCode();
+
   if (normalizedLink){
-    const code = generateRandomCode();
     console.log(code)
 
     try {
