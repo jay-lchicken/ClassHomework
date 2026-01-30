@@ -96,7 +96,7 @@ export async function POST(req) {
           email,
           displayName,
           formattedSubject,
-          code != null ? `https://link.s304.xyz/${code}` : null
+          normalizedLink != null ? `https://link.s304.xyz/${code}` : null
         ]
     );
 
