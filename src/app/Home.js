@@ -16,6 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { ThemeToggle } from "@/components/theme-toggle";
 export default function Add({homeworkList, subjects}) {
 
     const [homework, setHomework] = useState("");
@@ -120,43 +121,43 @@ export default function Add({homeworkList, subjects}) {
 
     const getDueDateColor = (dueDate) => {
         const days = getDaysUntilDue(dueDate);
-        if (days < 0) return "text-red-600 bg-red-50 hover:bg-red-50 border-transparent";
-        if (days <= 1) return "text-orange-600 bg-orange-50 hover:bg-orange-50 border-transparent";
-        if (days <= 3) return "text-yellow-600 bg-yellow-50 hover:bg-yellow-50 border-transparent";
-        return "text-green-600 bg-green-50 hover:bg-green-50 border-transparent";
+        if (days < 0) return "text-destructive bg-destructive/10 hover:bg-destructive/10 border-transparent";
+        if (days <= 1) return "text-orange-600 bg-orange-600/10 hover:bg-orange-600/10 border-transparent dark:text-orange-400 dark:bg-orange-400/10";
+        if (days <= 3) return "text-yellow-600 bg-yellow-600/10 hover:bg-yellow-600/10 border-transparent dark:text-yellow-400 dark:bg-yellow-400/10";
+        return "text-green-600 bg-green-600/10 hover:bg-green-600/10 border-transparent dark:text-green-400 dark:bg-green-400/10";
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-slate-50">
-            <header className="w-full bg-white border-b border-slate-200 sticky top-0 z-40">
+        <div className="flex flex-col min-h-screen bg-background">
+            <header className="w-full bg-card border-b sticky top-0 z-40">
                 <div className="max-w-6xl mx-auto w-full px-4 sm:px-6">
                     <div className="h-16 flex items-center justify-between gap-4">
                         <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center text-white font-semibold">
+                            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-semibold">
                                 S
                             </div>
                             <div className="leading-tight">
-                                <div className="text-sm text-slate-500">Project</div>
-                                <h1 className="text-base font-semibold text-slate-900">S304</h1>
+                                <div className="text-sm text-muted-foreground">Project</div>
+                                <h1 className="text-base font-semibold">S304</h1>
                             </div>
                         </div>
 
                         <div className="flex items-center gap-4">
                             <div className="flex items-center gap-2">
                                 <div className="text-right hidden sm:block">
-                                    <div className="text-sm font-medium text-slate-900">
+                                    <div className="text-sm font-medium">
                                         {user?.name || "Unknown"}
                                     </div>
-                                    <div className="text-xs text-slate-500">
+                                    <div className="text-xs text-muted-foreground">
                                         {user?.email || ""}
                                     </div>
                                 </div>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <button type="button" className="rounded-full">
-                                            <Avatar className="h-9 w-9 border border-slate-200 shadow-sm">
+                                            <Avatar className="h-9 w-9 border shadow-sm">
                                                 <AvatarImage src={user?.picture} alt={user?.name || "User"} />
-                                                <AvatarFallback className="bg-slate-100 text-slate-700 text-sm font-semibold">
+                                                <AvatarFallback className="text-sm font-semibold">
                                                     {(user?.name || "U").slice(0, 1).toUpperCase()}
                                                 </AvatarFallback>
                                             </Avatar>
@@ -173,6 +174,8 @@ export default function Add({homeworkList, subjects}) {
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </div>
+                                                        <ThemeToggle />
+
                         </div>
                     </div>
                 </div>
@@ -184,36 +187,36 @@ export default function Add({homeworkList, subjects}) {
 
                 {homeworkListState.length > 0 && (
                     <Card className="overflow-hidden">
-                        <CardHeader className="bg-slate-100 border-b border-slate-200">
-                            <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
+                        <CardHeader className="bg-muted/50 border-b">
+                            <CardTitle className="text-xl font-semibold flex items-center gap-2">
                                 <BookOpen className="w-6 h-6"/>
                                 Your Homework List
                             </CardTitle>
-                            <CardDescription className="text-slate-600">
+                            <CardDescription>
                                 {homeworkListState.length} homework
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="p-0">
                             <Table>
-                                <TableHeader className="bg-gray-50">
+                                <TableHeader>
                                     <TableRow>
-                                        <TableHead className="px-6 py-4 text-sm font-semibold text-gray-700">
+                                        <TableHead className="px-6 py-4 text-sm font-semibold">
                                             Assignment
                                         </TableHead>
-                                        <TableHead className="px-6 py-4 text-sm font-semibold text-gray-700">
+                                        <TableHead className="px-6 py-4 text-sm font-semibold">
                                             Link
                                         </TableHead>
 
-                                        <TableHead className="px-6 py-4 text-sm font-semibold text-gray-700">
+                                        <TableHead className="px-6 py-4 text-sm font-semibold">
                                             Subject
                                         </TableHead>
-                                        <TableHead className="px-6 py-4 text-sm font-semibold text-gray-700">
+                                        <TableHead className="px-6 py-4 text-sm font-semibold">
                                             Added by
                                         </TableHead>
-                                        <TableHead className="px-6 py-4 text-sm font-semibold text-gray-700">
+                                        <TableHead className="px-6 py-4 text-sm font-semibold">
                                             Due Date
                                         </TableHead>
-                                        <TableHead className="px-6 py-4 text-center text-sm font-semibold text-gray-700">
+                                        <TableHead className="px-6 py-4 text-center text-sm font-semibold">
                                             Status
                                         </TableHead>
                                     </TableRow>
@@ -224,7 +227,7 @@ export default function Add({homeworkList, subjects}) {
                                         return (
                                             <TableRow key={item.id || index}>
                                                 <TableCell className="px-6 py-4">
-                                                    <div className="text-sm font-medium text-gray-900">
+                                                    <div className="text-sm font-medium">
                                                         {item.homework_text}
                                                     </div>
                                                 </TableCell>
@@ -239,7 +242,7 @@ export default function Add({homeworkList, subjects}) {
                                                             Open
                                                         </a>
                                                     ) : (
-                                                        <span className="text-sm text-gray-400">—</span>
+                                                        <span className="text-sm text-muted-foreground">—</span>
                                                     )}
                                                 </TableCell>
 
@@ -249,12 +252,12 @@ export default function Add({homeworkList, subjects}) {
                                                     </Badge>
                                                 </TableCell>
                                                 <TableCell className="px-6 py-4">
-                                                    <div className="text-sm text-gray-700">
+                                                    <div className="text-sm">
                                                         {item.name}
                                                     </div>
                                                 </TableCell>
                                                 <TableCell className="px-6 py-4">
-                                                    <div className="text-sm text-gray-700">
+                                                    <div className="text-sm">
                                                         {formatDate(item.due_date)}
                                                     </div>
                                                 </TableCell>
@@ -288,8 +291,8 @@ export default function Add({homeworkList, subjects}) {
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-lg">
                         <DialogHeader>
-                            <div className="inline-flex items-center justify-center w-12 h-12 bg-slate-100 rounded-full mb-2">
-                                <BookOpen className="h-6 w-6 text-slate-700" />
+                            <div className="inline-flex items-center justify-center w-12 h-12 bg-muted rounded-full mb-2">
+                                <BookOpen className="h-6 w-6" />
                             </div>
                             <DialogTitle>Add Homework</DialogTitle>
                             <DialogDescription>
@@ -383,9 +386,9 @@ export default function Add({homeworkList, subjects}) {
                 {homeworkListState.length === 0 && (
                     <Card className="mt-6">
                         <CardContent className="py-12 text-center">
-                            <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-4"/>
-                            <h3 className="text-lg font-medium text-gray-600 mb-2">No homework yet</h3>
-                            <p className="text-gray-500">Add the first homework using the button below.</p>
+                            <BookOpen className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4"/>
+                            <h3 className="text-lg font-medium mb-2">No homework yet</h3>
+                            <p className="text-muted-foreground">Add the first homework using the button below.</p>
                         </CardContent>
                     </Card>
                 )}

@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Auth0Provider } from "@auth0/nextjs-auth0/client";
 import { auth0 } from "@/lib/auth0";
+import { ThemeProvider } from "@/components/theme-provider";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -20,19 +21,25 @@ export const metadata = {
 export default async function RootLayout({ children }) {
   const session = await auth0.getSession();
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-50 text-slate-900`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Auth0Provider>
-          {session?.user ? (
-            children
-          ) : (
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Auth0Provider>
+            {session?.user ? (
+              children
+            ) : (
             <div className="min-h-screen flex items-center justify-center p-6">
               <div className="w-full max-w-md">
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+                <div className="bg-card rounded-2xl shadow-sm border p-8">
                   <div className="text-center mb-8">
-                    <div className="w-14 h-14 rounded-xl mx-auto mb-4 flex items-center justify-center bg-slate-100 text-slate-700">
+                    <div className="w-14 h-14 rounded-xl mx-auto mb-4 flex items-center justify-center bg-muted text-muted-foreground">
                       <svg
                         className="w-7 h-7"
                         fill="none"
@@ -47,44 +54,45 @@ export default async function RootLayout({ children }) {
                         />
                       </svg>
                     </div>
-                    <h1 className="text-2xl font-semibold text-slate-900 mb-2">
+                    <h1 className="text-2xl font-semibold mb-2">
                       Sign in
                     </h1>
-                    <p className="text-slate-600">
+                    <p className="text-muted-foreground">
                       Use your school account to continue.
                     </p>
                   </div>
 
                   <a
                     href="/auth/login"
-                    className="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition-colors duration-200 mb-4"
+                    className="block w-full text-center bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 px-4 rounded-xl transition-colors duration-200 mb-4"
                   >
                     Continue with Google
                   </a>
 
                   <div className="relative mb-4">
                     <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-slate-200"></div>
+                      <div className="w-full border-t"></div>
                     </div>
                     <div className="relative flex justify-center text-sm">
-                      <span className="px-4 bg-white text-slate-500">or</span>
+                      <span className="px-4 bg-card text-muted-foreground">or</span>
                     </div>
                   </div>
 
                   <a
                     href="/auth/login?screen_hint=signup"
-                    className="block w-full text-center border border-slate-300 hover:border-slate-400 text-slate-700 font-semibold py-3 px-4 rounded-xl transition-colors duration-200 hover:bg-slate-50"
+                    className="block w-full text-center border hover:border-foreground/20 font-semibold py-3 px-4 rounded-xl transition-colors duration-200 hover:bg-accent"
                   >
                     Create account
                   </a>
                 </div>
-                <p className="text-xs text-slate-500 text-center mt-6">
+                <p className="text-xs text-muted-foreground text-center mt-6">
                   By signing in, you agree to use a verified school email.
                 </p>
               </div>
             </div>
-          )}
-        </Auth0Provider>
+            )}
+          </Auth0Provider>
+        </ThemeProvider>
       </body>
     </html>
   );
