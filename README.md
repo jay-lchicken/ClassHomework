@@ -1,5 +1,6 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+
 ## Authentication Setup
 
 This project uses [Auth0](https://auth0.com) for authentication. Before running the application, you need to set up Auth0:
