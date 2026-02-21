@@ -53,6 +53,38 @@ This application restricts access to users with email addresses ending in:
 
 Users with other email domains will receive an authorization error. To modify this, edit the validation logic in `src/app/api/addHomework/route.js`.
 
+## Database Setup
+
+Create a PostgreSQL database and run the initialization script to set up the required tables:
+
+```bash
+psql -d <your_database> -f init.sql
+```
+
+Or connect to your database and run the SQL commands manually:
+
+```sql
+CREATE TABLE IF NOT EXISTS subjects (
+    name TEXT PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS homework (
+    id SERIAL PRIMARY KEY,
+    homework_text TEXT NOT NULL,
+    due_date DATE NOT NULL,
+    email TEXT NOT NULL,
+    name TEXT NOT NULL,
+    subject TEXT REFERENCES subjects(name) ON DELETE SET NULL,
+    link TEXT
+);
+```
+
+Then set the `DATABASE_URL` environment variable in your `.env.local` file:
+
+```bash
+DATABASE_URL='postgresql://user:password@localhost:5432/your_database'
+```
+
 ## Getting Started
 
 First, run the development server:
