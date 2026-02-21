@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS subjects (
 CREATE TABLE IF NOT EXISTS homework (
     id SERIAL PRIMARY KEY,
     homework_text TEXT NOT NULL,
-    due_date DATE NOT NULL,
+    due_date TEXT NOT NULL,
     email TEXT NOT NULL,
     name TEXT NOT NULL,
     subject TEXT REFERENCES subjects(name) ON DELETE SET NULL,
