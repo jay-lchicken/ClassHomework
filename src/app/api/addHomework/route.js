@@ -57,6 +57,7 @@ export async function POST(req) {
           tag: String(code),
           description: "Shortened by on Project S304",
           baseUrl: "link.s304.xyz",
+          suspense: true
         }),
       });
 
