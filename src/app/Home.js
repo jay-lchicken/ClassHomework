@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Calendar, BookOpen, Plus, Clock } from "lucide-react";
+import { Calendar, BookOpen, Plus, Clock, ListTodo } from "lucide-react";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { DateTime } from "luxon";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
-export default function Add({homeworkList, subjects}) {
+import MyTodoCard from "@/components/my-todo-card";
+export default function Add({homeworkList, subjects, initialTodos = []}) {
 
     const [homework, setHomework] = useState("");
     const [dueDate, setDueDate] = useState("");
@@ -28,6 +29,10 @@ export default function Add({homeworkList, subjects}) {
     const { user } = useUser();
     const { toast } = useToast();
     const [showAddNewHomework, setShowAddNewHomework] = useState(false);
+
+    const [todos, setTodos] = useState(initialTodos);
+    const [todoDialog, setTodoDialog] = useState(null);
+    const [isAddingTodo, setIsAddingTodo] = useState(false);
     
 
 
@@ -102,6 +107,53 @@ export default function Add({homeworkList, subjects}) {
     };
 
 
+
+    const toggleTodo = async (todoId, currentCompleted) => {
+        setTodos((prev) => prev.map((t) => t.todo_id === todoId ? { ...t, completed: !currentCompleted } : t));
+        const res = await fetch(`/api/todos/${todoId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ completed: !currentCompleted }),
+        });
+        if (!res.ok) {
+            setTodos((prev) => prev.map((t) => t.todo_id === todoId ? { ...t, completed: currentCompleted } : t));
+            toast({ title: "Failed to update", variant: "destructive" });
+        }
+    };
+
+    const deleteTodo = async (todoId) => {
+        setTodos((prev) => prev.filter((t) => t.todo_id !== todoId));
+        const res = await fetch(`/api/todos/${todoId}`, { method: "DELETE" });
+        if (!res.ok) {
+            toast({ title: "Failed to delete", variant: "destructive" });
+            const refetch = await fetch("/api/todos");
+            if (refetch.ok) setTodos(await refetch.json());
+        }
+    };
+
+    const addToMyList = async () => {
+        if (!todoDialog) return;
+        setIsAddingTodo(true);
+        try {
+            const res = await fetch("/api/todos", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ task: todoDialog.task, due_date: todoDialog.due_date }),
+            });
+            const result = await res.json();
+            if (!res.ok) {
+                toast({ title: "Failed to add", description: result.error, variant: "destructive" });
+            } else {
+                setTodos((prev) => [...prev, result]);
+                toast({ title: "Added to your list", description: todoDialog.task });
+                setTodoDialog(null);
+            }
+        } catch (err) {
+            toast({ title: "Error", description: err?.message || String(err), variant: "destructive" });
+        } finally {
+            setIsAddingTodo(false);
+        }
+    };
 
     const formatDate = (dateString) => {
         const [year, month, day] = dateString.split('-');
@@ -181,9 +233,62 @@ export default function Add({homeworkList, subjects}) {
                 </div>
             </header>
 
-            <div className="max-w-6xl mx-auto w-full p-4 sm:p-6">
+            <div className="max-w-6xl mx-auto w-full p-4 sm:p-6 space-y-6">
 
+                <MyTodoCard todos={todos} onToggle={toggleTodo} onDelete={deleteTodo} />
 
+                <Dialog open={!!todoDialog} onOpenChange={(open) => { if (!open) setTodoDialog(null); }}>
+                    <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                            <div className="inline-flex items-center justify-center w-12 h-12 bg-muted rounded-full mb-2">
+                                <ListTodo className="h-6 w-6" />
+                            </div>
+                            <DialogTitle>Add to My List</DialogTitle>
+                            <DialogDescription>Review and edit before adding to your personal to-do list.</DialogDescription>
+                        </DialogHeader>
+                        {todoDialog && (
+                            <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="todo-task">Task</Label>
+                                    <Input
+                                        id="todo-task"
+                                        value={todoDialog.task}
+                                        onChange={(e) => setTodoDialog((prev) => ({ ...prev, task: e.target.value }))}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="todo-due">Due Date</Label>
+                                    <div className="relative">
+                                        <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                                        <Input
+                                            id="todo-due"
+                                            type="date"
+                                            className="pl-9"
+                                            value={todoDialog.due_date}
+                                            onChange={(e) => setTodoDialog((prev) => ({ ...prev, due_date: e.target.value }))}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setTodoDialog(null)}>Cancel</Button>
+                            <Button
+                                onClick={() => {
+                                    if (!todoDialog?.task || !todoDialog?.due_date) {
+                                        toast({ title: "Missing details", description: "Task and due date are required.", variant: "destructive" });
+                                        return;
+                                    }
+                                    addToMyList();
+                                }}
+                                disabled={isAddingTodo}
+                            >
+                                <Plus className="h-4 w-4" />
+                                {isAddingTodo ? "Adding..." : "Add to my list"}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
 
                 {homeworkListState.length > 0 && (
                     <Card className="overflow-hidden">
@@ -219,6 +324,7 @@ export default function Add({homeworkList, subjects}) {
                                         <TableHead className="px-6 py-4 text-center text-sm font-semibold">
                                             Status
                                         </TableHead>
+                                        <TableHead className="px-6 py-4 text-sm font-semibold" />
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -273,6 +379,17 @@ export default function Add({homeworkList, subjects}) {
                                                             : `${daysUntilDue} days left`
                                                         }
                                                     </Badge>
+                                                </TableCell>
+                                                <TableCell className="px-6 py-4">
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        className="gap-1 text-xs"
+                                                        onClick={() => setTodoDialog({ task: item.homework_text, due_date: item.due_date })}
+                                                    >
+                                                        <ListTodo className="h-3 w-3" />
+                                                        Add to my list
+                                                    </Button>
                                                 </TableCell>
                                             </TableRow>
                                         );

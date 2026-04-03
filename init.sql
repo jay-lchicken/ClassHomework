@@ -15,3 +15,11 @@ CREATE TABLE IF NOT EXISTS homework (
     subject TEXT REFERENCES subjects(name) ON DELETE SET NULL,
     link TEXT
 );
+CREATE TABLE IF NOT EXISTS todos(
+    todo_id   uuid default gen_random_uuid() not null,
+    task      text                           not null,
+    due_date  text                    not null,
+    completed bool default false             not null,
+    user_id   uuid                           not null
+);
+

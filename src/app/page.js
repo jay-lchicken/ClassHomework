@@ -1,6 +1,6 @@
 import Add from "@/app/Home";
-import { cookies } from "next/headers";
 import pool from "@/lib/db";
+import { auth0 } from "@/lib/auth0";
 async function getHomeworkList() {
     try {
         const insertResult = await pool.query(
@@ -31,12 +31,28 @@ async function getSubjects(){
 }
 
 
+async function getTodos(sub) {
+    try {
+        const uuidResult = await pool.query("SELECT md5($1)::uuid AS id", [sub]);
+        const userId = uuidResult.rows[0].id;
+        const result = await pool.query(
+    `SELECT todo_id, task, due_date, completed FROM todos WHERE user_id = $1 AND due_date::DATE >= (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Singapore')::DATE ORDER BY due_date ASC`,
+    [userId]
+);
+        return result.rows;
+    } catch (error) {
+        console.error("Error fetching todos:", error);
+        return [];
+    }
+}
+
 export default async function Home() {
     const homeworkList = await getHomeworkList();
     const subjects = await getSubjects();
-
+    const session = await auth0.getSession();
+    const todos = session?.user?.sub ? await getTodos(session.user.sub) : [];
 
   return (
-    <Add homeworkList={homeworkList} subjects={subjects}/>
+    <Add homeworkList={homeworkList} subjects={subjects} initialTodos={todos} />
   );
 }
