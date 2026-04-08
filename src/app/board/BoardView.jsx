@@ -1,14 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useUser } from "@auth0/nextjs-auth0/client";
 import { DateTime } from "luxon";
 import { BookOpen, Clock, RefreshCw, LayoutGrid } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 const RELOAD_INTERVAL = 30_000;
@@ -20,10 +17,10 @@ function getDaysUntilDue(dueDateStr) {
 }
 
 function getHexColors(days) {
-    if (days < 0) return { bg: "bg-red-500/90", text: "text-white", border: "border-red-600", label: "bg-red-600" };
-    if (days <= 1) return { bg: "bg-orange-400/90", text: "text-white", border: "border-orange-500", label: "bg-orange-500" };
-    if (days <= 3) return { bg: "bg-yellow-400/90", text: "text-gray-900", border: "border-yellow-500", label: "bg-yellow-500" };
-    return { bg: "bg-emerald-500/90", text: "text-white", border: "border-emerald-600", label: "bg-emerald-600" };
+    if (days < 0) return { bg: "bg-red-600/95", text: "text-white", border: "border-red-700", label: "bg-red-700" };
+    if (days <= 1) return { bg: "bg-red-400/90", text: "text-white", border: "border-red-500", label: "bg-red-500" };
+    if (days <= 3) return { bg: "bg-gray-400/90", text: "text-white", border: "border-gray-500", label: "bg-gray-500" };
+    return { bg: "bg-gray-800/90", text: "text-white", border: "border-gray-900", label: "bg-gray-900" };
 }
 
 function formatDate(dateString) {
@@ -48,14 +45,14 @@ function HexagonTile({ item, onClick }) {
             type="button"
             onClick={() => onClick(item)}
             className="group relative flex items-center justify-center focus:outline-none"
-            style={{ width: 140, height: 160 }}
+            style={{ width: 140, height: 162 }}
             aria-label={`Homework: ${item.homework_text}`}
         >
-            {/* Hexagon shape via clip-path */}
+            {/* Hexagon shape via clip-path — regular pointy-top hexagon (w:h = √3:2) */}
             <div
                 className={`absolute inset-0 transition-transform duration-200 group-hover:scale-105 group-focus-visible:scale-105 ${colors.bg} shadow-md`}
                 style={{
-                    clipPath: "polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)",
+                    clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
                 }}
             />
             {/* Content */}
@@ -75,7 +72,6 @@ function HexagonTile({ item, onClick }) {
 }
 
 export default function BoardView({ initialHomework }) {
-    const { user } = useUser();
     const [homeworkList, setHomeworkList] = useState(initialHomework || []);
     const [lastUpdated, setLastUpdated] = useState(new Date());
     const [isRefreshing, setIsRefreshing] = useState(false);
@@ -151,27 +147,6 @@ export default function BoardView({ initialHomework }) {
                             <Button variant="ghost" size="sm" onClick={fetchHomework} disabled={isRefreshing}>
                                 <RefreshCw className="h-4 w-4" />
                             </Button>
-                            <div className="flex items-center gap-2">
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <button type="button" className="rounded-full">
-                                            <Avatar className="h-9 w-9 border shadow-sm">
-                                                <AvatarImage src={user?.picture} alt={user?.name || "User"} />
-                                                <AvatarFallback className="text-sm font-semibold">
-                                                    {(user?.name || "U").slice(0, 1).toUpperCase()}
-                                                </AvatarFallback>
-                                            </Avatar>
-                                        </button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end" className="w-48">
-                                        <DropdownMenuLabel>{user?.name || "Account"}</DropdownMenuLabel>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuItem asChild>
-                                            <a href="/auth/logout">Log out</a>
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                            </div>
                             <ThemeToggle />
                         </div>
                     </div>
@@ -194,10 +169,10 @@ export default function BoardView({ initialHomework }) {
                     {/* Legend */}
                     <div className="hidden sm:flex items-center gap-3 text-xs">
                         {[
-                            { label: "Overdue", cls: "bg-red-500" },
-                            { label: "≤ 1 day", cls: "bg-orange-400" },
-                            { label: "≤ 3 days", cls: "bg-yellow-400" },
-                            { label: "4+ days", cls: "bg-emerald-500" },
+                            { label: "Overdue", cls: "bg-red-600" },
+                            { label: "≤ 1 day", cls: "bg-red-400" },
+                            { label: "≤ 3 days", cls: "bg-gray-400" },
+                            { label: "4+ days", cls: "bg-gray-800" },
                         ].map(({ label, cls }) => (
                             <span key={label} className="flex items-center gap-1">
                                 <span className={`inline-block w-3 h-3 rounded-sm ${cls}`} />
@@ -221,8 +196,8 @@ export default function BoardView({ initialHomework }) {
                                 key={rowIdx}
                                 className="flex"
                                 style={{
-                                    marginTop: rowIdx === 0 ? 0 : -30,
-                                    marginLeft: rowIdx % 2 === 1 ? 70 : 0,
+                                    marginTop: rowIdx === 0 ? 0 : -40, // 25% of hex height (162) for honeycomb overlap
+                                    marginLeft: rowIdx % 2 === 1 ? 74 : 0, // half of (tile width 140 + gap 8) for offset rows
                                 }}
                             >
                                 {row.map((item) => (
@@ -258,10 +233,10 @@ export default function BoardView({ initialHomework }) {
                                         selectedDays < 0
                                             ? "bg-red-100 text-red-700"
                                             : selectedDays <= 1
-                                            ? "bg-orange-100 text-orange-700"
+                                            ? "bg-red-100 text-red-500"
                                             : selectedDays <= 3
-                                            ? "bg-yellow-100 text-yellow-700"
-                                            : "bg-green-100 text-green-700"
+                                            ? "bg-gray-100 text-gray-600"
+                                            : "bg-gray-100 text-gray-800"
                                     }`}
                                 >
                                     {selectedDays < 0
