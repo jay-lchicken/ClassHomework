@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Calendar, BookOpen, Plus, Clock, ListTodo } from "lucide-react";
+import { Calendar, BookOpen, Plus, Clock, ListTodo, LayoutGrid } from "lucide-react";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { DateTime } from "luxon";
 import { Button } from "@/components/ui/button";
@@ -195,6 +195,13 @@ export default function Add({homeworkList, subjects, initialTodos = []}) {
                         </div>
 
                         <div className="flex items-center gap-4">
+                            <a
+                                href="/board"
+                                className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden sm:flex items-center gap-1"
+                            >
+                                <LayoutGrid className="h-4 w-4" />
+                                Board
+                            </a>
                             <div className="flex items-center gap-2">
                                 <div className="text-right hidden sm:block">
                                     <div className="text-sm font-medium">
