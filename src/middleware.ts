@@ -1,8 +1,21 @@
 import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { auth0 } from "./lib/auth0";
 
 export async function middleware(request: NextRequest) {
-  return await auth0.middleware(request);
+  const pathname = request.nextUrl.pathname;
+
+  // Skip auth0 middleware for public routes, just set the header
+  if (pathname.startsWith("/board")) {
+    const res = NextResponse.next();
+    res.headers.set("x-pathname", pathname);
+    return res;
+  }
+
+  const response = await auth0.middleware(request);
+  const res = response || NextResponse.next();
+  res.headers.set("x-pathname", pathname);
+  return res;
 }
 
 export const config = {
@@ -12,8 +25,7 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico, sitemap.xml, robots.txt (metadata files)
-     * - board (public board view, no auth required)
      */
-    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|board).*)",
+    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
 };

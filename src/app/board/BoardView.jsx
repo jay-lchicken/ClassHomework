@@ -45,23 +45,21 @@ function HexagonTile({ item, onClick }) {
             type="button"
             onClick={() => onClick(item)}
             className="group relative flex items-center justify-center focus:outline-none"
-            style={{ width: 140, height: 162 }}
+            style={{ width: 220, height: 250 }}
             aria-label={`Homework: ${item.homework_text}`}
         >
-            {/* Hexagon shape via clip-path — regular pointy-top hexagon (w:h = √3:2) */}
             <div
                 className={`absolute inset-0 transition-transform duration-200 group-hover:scale-105 group-focus-visible:scale-105 ${colors.bg} shadow-md`}
                 style={{
                     clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
                 }}
             />
-            {/* Content */}
-            <div className={`relative z-10 flex flex-col items-center justify-center gap-1 px-5 text-center ${colors.text}`} style={{ width: 120 }}>
-                <span className="text-[11px] font-semibold leading-tight line-clamp-3 break-words w-full">
+            <div className={` w-full relative z-10 flex flex-col items-center justify-center gap-1 px-5 text-center ${colors.text}`}>
+                <span className="text-xl font-semibold  line-clamp-3 break-words w-full ">
                     {item.homework_text}
                 </span>
                 {item.subject && (
-                    <span className="text-[9px] font-medium opacity-80 truncate max-w-full">
+                    <span className="text-md font-medium opacity-80 truncate max-w-full">
                         {item.subject}
                     </span>
                 )}
@@ -107,7 +105,6 @@ export default function BoardView({ initialHomework }) {
         return () => clearInterval(tick);
     }, []);
 
-    // Arrange items in offset honeycomb rows
     const cols = 5;
     const rows = [];
     for (let i = 0; i < homeworkList.length; i += cols) {
@@ -119,7 +116,6 @@ export default function BoardView({ initialHomework }) {
 
     return (
         <div className="flex flex-col min-h-screen bg-background">
-            {/* Header */}
             <header className="w-full bg-card border-b sticky top-0 z-40">
                 <div className="max-w-6xl mx-auto w-full px-4 sm:px-6">
                     <div className="h-16 flex items-center justify-between gap-4">
@@ -153,7 +149,6 @@ export default function BoardView({ initialHomework }) {
                 </div>
             </header>
 
-            {/* Board */}
             <main className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 py-8 space-y-6">
                 <div className="flex items-center justify-between">
                     <div>
@@ -189,15 +184,14 @@ export default function BoardView({ initialHomework }) {
                         <p className="text-sm">Check back later or add a new assignment on the list view.</p>
                     </div>
                 ) : (
-                    /* Honeycomb grid */
                     <div className="flex flex-col items-center gap-0" style={{ paddingBottom: 40 }}>
                         {rows.map((row, rowIdx) => (
                             <div
                                 key={rowIdx}
                                 className="flex"
                                 style={{
-                                    marginTop: rowIdx === 0 ? 0 : -40, // 25% of hex height (162) for honeycomb overlap
-                                    marginLeft: rowIdx % 2 === 1 ? 74 : 0, // half of (tile width 140 + gap 8) for offset rows
+                                    marginTop: rowIdx === 0 ? 0 : -40,
+                                    marginLeft: rowIdx % 2 === 1 ? 74 : 0,
                                 }}
                             >
                                 {row.map((item) => (
@@ -211,7 +205,6 @@ export default function BoardView({ initialHomework }) {
                 )}
             </main>
 
-            {/* Detail Dialog */}
             <Dialog open={!!selected} onOpenChange={(open) => { if (!open) handleDialogClose(); }}>
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>

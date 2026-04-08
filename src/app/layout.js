@@ -3,6 +3,7 @@ import "./globals.css";
 import { Auth0Provider } from "@auth0/nextjs-auth0/client";
 import { auth0 } from "@/lib/auth0";
 import { ThemeProvider } from "@/components/theme-provider";
+import { headers } from "next/headers";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -20,6 +21,9 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
   const session = await auth0.getSession();
+  const headersList = await headers();
+  const pathname = headersList.get("x-pathname") || "";
+  const isPublicRoute = pathname.startsWith("/board");
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -32,7 +36,7 @@ export default async function RootLayout({ children }) {
           disableTransitionOnChange
         >
           <Auth0Provider>
-            {session?.user ? (
+            {session?.user || isPublicRoute ? (
               children
             ) : (
             <div className="min-h-screen flex items-center justify-center p-6">
