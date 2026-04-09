@@ -23,3 +23,14 @@ CREATE TABLE IF NOT EXISTS todos(
     user_id   uuid                           not null
 );
 
+-- Single-row table that stores the controller's current Spotify playback state
+-- so all /board instances can sync to it.
+CREATE TABLE IF NOT EXISTS music_state (
+    id         INT PRIMARY KEY DEFAULT 1 CHECK (id = 1),
+    position_s FLOAT       NOT NULL DEFAULT 0,
+    duration_s FLOAT       NOT NULL DEFAULT 0,
+    is_paused  BOOL        NOT NULL DEFAULT TRUE,
+    synced_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+INSERT INTO music_state (id) VALUES (1) ON CONFLICT DO NOTHING;
+
