@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { DateTime } from "luxon";
 import { BookOpen, Clock, RefreshCw, LayoutGrid } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -71,21 +71,134 @@ function HexagonTile({ item, onClick }) {
 
 // Spotify playlist embedded in the board (LoFi Beats – public playlist)
 const SPOTIFY_PLAYLIST_ID = "37i9dQZF1DWWQRwui0ExPn";
-const SPOTIFY_PLAYER_HEIGHT = 80;
+const SPOTIFY_PLAYER_HEIGHT = 152;
+const SYNC_INTERVAL_MS = 3000;
+const SEEK_THRESHOLD_S = 5;
+
+// Load the Spotify IFrame API script once across all renders.
+let spotifyApiPromise = null;
+function loadSpotifyIframeApi() {
+    if (spotifyApiPromise) return spotifyApiPromise;
+    spotifyApiPromise = new Promise((resolve) => {
+        if (window.SpotifyIframeApi) {
+            resolve(window.SpotifyIframeApi);
+            return;
+        }
+        window.onSpotifyIframeApiReady = (IFrameAPI) => {
+            window.SpotifyIframeApi = IFrameAPI;
+            resolve(IFrameAPI);
+        };
+        const script = document.createElement("script");
+        script.src = "https://open.spotify.com/embed/iframe-api/v1";
+        script.async = true;
+        document.head.appendChild(script);
+    });
+    return spotifyApiPromise;
+}
 
 function SpotifyPlayer({ isController }) {
+    const containerRef = useRef(null);
+    const controllerRef = useRef(null);
+    // Latest playback state reported by the IFrame API
+    const latestStateRef = useRef({ position: 0, duration: 0, is_paused: true });
+
+    // Initialize the Spotify IFrame API controller
+    useEffect(() => {
+        let isMounted = true;
+        loadSpotifyIframeApi().then((IFrameAPI) => {
+            if (!isMounted || !containerRef.current) return;
+            IFrameAPI.createController(
+                containerRef.current,
+                {
+                    uri: `spotify:playlist:${SPOTIFY_PLAYLIST_ID}`,
+                    width: "100%",
+                    height: SPOTIFY_PLAYER_HEIGHT,
+                },
+                (controller) => {
+                    if (!isMounted) return;
+                    controllerRef.current = controller;
+                    function onPlaybackUpdate(e) {
+                        if (!isMounted) return;
+                        const { position, duration, is_paused } = e.data;
+                        latestStateRef.current = { position, duration, is_paused };
+                    }
+                    controller.addListener("playback_update", onPlaybackUpdate);
+                    // Store reference for cleanup
+                    controllerRef._cleanupListener = () =>
+                        controller.removeListener("playback_update", onPlaybackUpdate);
+                }
+            );
+        });
+        return () => {
+            isMounted = false;
+            controllerRef._cleanupListener?.();
+        };
+    }, []);
+
+    // Controller: push playback state to the server every SYNC_INTERVAL_MS
+    useEffect(() => {
+        if (!isController) return;
+        const interval = setInterval(async () => {
+            const { position, duration, is_paused } = latestStateRef.current;
+            try {
+                await fetch("/api/music-state", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ position_s: position, duration_s: duration, is_paused }),
+                });
+            } catch {
+                // Non-critical – next tick will retry
+            }
+        }, SYNC_INTERVAL_MS);
+        return () => clearInterval(interval);
+    }, [isController]);
+
+    // Viewer: poll server state and sync local playback every SYNC_INTERVAL_MS
+    useEffect(() => {
+        if (isController) return;
+        let lastSyncedAt = null;
+        const interval = setInterval(async () => {
+            try {
+                const res = await fetch("/api/music-state");
+                if (!res.ok) return;
+                const remote = await res.json();
+                const controller = controllerRef.current;
+                if (!controller || !remote.synced_at) return;
+                if (remote.synced_at === lastSyncedAt) return; // nothing new
+                lastSyncedAt = remote.synced_at;
+
+                // Estimate where the track should be now, accounting for network delay
+                const elapsedS = (Date.now() - Date.parse(remote.synced_at)) / 1000;
+                const targetPosition = remote.is_paused
+                    ? remote.position_s
+                    : remote.position_s + elapsedS;
+
+                const local = latestStateRef.current;
+
+                // Sync play/pause state
+                if (remote.is_paused !== local.is_paused) {
+                    if (remote.is_paused) {
+                        controller.pause();
+                    } else {
+                        controller.play();
+                    }
+                }
+
+                // Seek if position is too far off
+                const drift = Math.abs(targetPosition - local.position);
+                if (drift > SEEK_THRESHOLD_S) {
+                    controller.seek(targetPosition);
+                }
+            } catch {
+                // Non-critical – next tick will retry
+            }
+        }, SYNC_INTERVAL_MS);
+        return () => clearInterval(interval);
+    }, [isController]);
+
     return (
-        <div className="relative w-full" style={{ height: SPOTIFY_PLAYER_HEIGHT }}>
-            <iframe
-                title="Spotify Player"
-                src={`https://open.spotify.com/embed/playlist/${SPOTIFY_PLAYLIST_ID}?utm_source=generator&theme=0`}
-                width="100%"
-                height={SPOTIFY_PLAYER_HEIGHT}
-                frameBorder="0"
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy"
-                style={{ borderRadius: 12 }}
-            />
+        <div className="relative w-full">
+            <div ref={containerRef} />
             {/* Block iframe interaction for non-controller users */}
             {!isController && (
                 <div

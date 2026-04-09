@@ -1,8 +1,7 @@
 import pool from "@/lib/db";
 import { auth0 } from "@/lib/auth0";
+import { MUSIC_CONTROLLER_EMAIL } from "@/lib/constants";
 import BoardView from "./BoardView";
-
-const MUSIC_CONTROLLER_EMAIL = "lai_hong_yu@s2024.ssts.edu.sg";
 
 async function getHomeworkList() {
     try {
