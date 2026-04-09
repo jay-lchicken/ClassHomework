@@ -69,7 +69,36 @@ function HexagonTile({ item, onClick }) {
     );
 }
 
-export default function BoardView({ initialHomework }) {
+// Spotify playlist embedded in the board (LoFi Beats – public playlist)
+const SPOTIFY_PLAYLIST_ID = "37i9dQZF1DWWQRwui0ExPn";
+const SPOTIFY_PLAYER_HEIGHT = 80;
+
+function SpotifyPlayer({ isController }) {
+    return (
+        <div className="relative w-full" style={{ height: SPOTIFY_PLAYER_HEIGHT }}>
+            <iframe
+                title="Spotify Player"
+                src={`https://open.spotify.com/embed/playlist/${SPOTIFY_PLAYLIST_ID}?utm_source=generator&theme=0`}
+                width="100%"
+                height={SPOTIFY_PLAYER_HEIGHT}
+                frameBorder="0"
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"
+                style={{ borderRadius: 12 }}
+            />
+            {/* Block iframe interaction for non-controller users */}
+            {!isController && (
+                <div
+                    className="absolute inset-0 cursor-not-allowed"
+                    title="Only the music controller can change the music"
+                    style={{ borderRadius: 12 }}
+                />
+            )}
+        </div>
+    );
+}
+
+export default function BoardView({ initialHomework, isController = false }) {
     const [homeworkList, setHomeworkList] = useState(initialHomework || []);
     const [lastUpdated, setLastUpdated] = useState(new Date());
     const [isRefreshing, setIsRefreshing] = useState(false);
@@ -150,6 +179,15 @@ export default function BoardView({ initialHomework }) {
             </header>
 
             <main className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 py-8 space-y-6">
+                <div className="w-full max-w-sm">
+                    <SpotifyPlayer isController={isController} />
+                    {!isController && (
+                        <p className="text-xs text-muted-foreground mt-1 text-center">
+                            Music controls are restricted to the class controller.
+                        </p>
+                    )}
+                </div>
+
                 <div className="flex items-center justify-between">
                     <div>
                         <h2 className="text-2xl font-bold flex items-center gap-2">

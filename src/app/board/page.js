@@ -1,5 +1,8 @@
 import pool from "@/lib/db";
+import { auth0 } from "@/lib/auth0";
 import BoardView from "./BoardView";
+
+const MUSIC_CONTROLLER_EMAIL = "lai_hong_yu@s2024.ssts.edu.sg";
 
 async function getHomeworkList() {
     try {
@@ -18,5 +21,7 @@ async function getHomeworkList() {
 
 export default async function BoardPage() {
     const homeworkList = await getHomeworkList();
-    return <BoardView initialHomework={homeworkList} />;
+    const session = await auth0.getSession();
+    const isController = session?.user?.email === MUSIC_CONTROLLER_EMAIL;
+    return <BoardView initialHomework={homeworkList} isController={isController} />;
 }
